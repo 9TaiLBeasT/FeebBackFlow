@@ -115,16 +115,18 @@ const SurveyList = ({ userId, onCreateSurvey }: SurveyListProps) => {
     );
   }
   return (
-    <div className="w-full bg-background p-6 rounded-lg">
+    <div className="w-full bg-gradient-cyber p-6 rounded-lg font-orbitron">
       <div className="flex justify-between items-center mb-6">
         <div>
-          <h2 className="text-2xl font-bold text-white">Your Surveys</h2>
+          <h2 className="text-2xl font-bold text-cyber-blue animate-glow-pulse">
+            Your Surveys
+          </h2>
           <p className="text-muted-foreground">
             Manage and track your feedback collection
           </p>
         </div>
         <Button
-          className="bg-[#1E90FF] hover:bg-[#1E90FF]/80 text-white"
+          className="cyber-button text-black font-semibold"
           onClick={onCreateSurvey}
         >
           <PlusCircle className="mr-2 h-4 w-4" />
@@ -145,7 +147,7 @@ const SurveyList = ({ userId, onCreateSurvey }: SurveyListProps) => {
               <p className="text-sm">Create your first survey to get started</p>
             </div>
             <Button
-              className="bg-[#1E90FF] hover:bg-[#1E90FF]/80 text-white"
+              className="cyber-button text-black font-semibold"
               onClick={onCreateSurvey}
             >
               <PlusCircle className="mr-2 h-4 w-4" />
@@ -267,7 +269,7 @@ const SurveyCard = ({ survey }: { survey: SurveyProps }) => {
   };
 
   return (
-    <Card className="bg-[#1A1A1A] border-[#2F2F2F] overflow-hidden">
+    <Card className="cyber-card overflow-hidden animate-slide-up hover:border-cyber-blue transition-all duration-300">
       <CardHeader className="pb-2">
         <div className="flex justify-between items-start">
           <div>

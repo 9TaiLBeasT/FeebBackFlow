@@ -246,25 +246,27 @@ export default function Hero({ onSignUp, onSignIn }: HeroProps) {
   };
 
   return (
-    <div className="min-h-screen bg-[#121212] text-[#E0E0E0]">
+    <div className="min-h-screen bg-gradient-cyber text-[#E0E0E0] font-orbitron">
       {/* Header */}
-      <header className="border-b border-slate-800">
+      <header className="border-b border-slate-800 bg-slate-900/50 backdrop-blur-sm">
         <div className="container mx-auto px-6 py-4 flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <div className="h-8 w-8 rounded-md bg-[#1E90FF]"></div>
-            <h1 className="text-xl font-bold text-white">FeedbackPro</h1>
+            <div className="h-8 w-8 rounded-md bg-cyber-blue"></div>
+            <h1 className="text-xl font-bold text-cyber-blue text-enhanced">
+              FeedbackPro
+            </h1>
           </div>
           <div className="flex items-center gap-4">
             <Button
               variant="ghost"
               onClick={onSignIn}
-              className="text-slate-400 hover:text-white"
+              className="text-slate-400 hover:text-cyber-blue transition-colors"
             >
               Sign In
             </Button>
             <Button
               onClick={onSignUp}
-              className="bg-[#1E90FF] hover:bg-[#1E90FF]/80 text-white"
+              className="cyber-button text-black font-semibold"
             >
               Get Started
             </Button>
@@ -275,9 +277,9 @@ export default function Hero({ onSignUp, onSignIn }: HeroProps) {
       {/* Hero Section */}
       <section className="container mx-auto px-6 py-20 text-center">
         <div className="max-w-4xl mx-auto">
-          <h1 className="text-5xl md:text-6xl font-bold text-white mb-6">
+          <h1 className="text-5xl md:text-6xl font-bold text-white mb-6 animate-fade-in text-enhanced">
             Collect Client Feedback
-            <span className="text-[#1E90FF]"> Like a Pro</span>
+            <span className="text-cyber-blue"> Like a Pro</span>
           </h1>
           <p className="text-xl text-slate-400 mb-8 max-w-2xl mx-auto">
             A professional feedback collection platform that allows businesses
@@ -288,7 +290,7 @@ export default function Hero({ onSignUp, onSignIn }: HeroProps) {
             <Button
               size="lg"
               onClick={onSignUp}
-              className="bg-[#1E90FF] hover:bg-[#1E90FF]/80 text-white px-8 py-3 text-lg"
+              className="cyber-button text-black px-8 py-3 text-lg font-semibold"
               data-signup-btn
             >
               Start Free Trial
@@ -309,7 +311,7 @@ export default function Hero({ onSignUp, onSignIn }: HeroProps) {
       {/* Features Section */}
       <section className="container mx-auto px-6 py-20">
         <div className="text-center mb-16">
-          <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
+          <h2 className="text-3xl md:text-4xl font-bold text-white mb-4 text-enhanced">
             Everything You Need to Collect Feedback
           </h2>
           <p className="text-xl text-slate-400 max-w-2xl mx-auto">
@@ -320,7 +322,11 @@ export default function Hero({ onSignUp, onSignIn }: HeroProps) {
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
           {features.map((feature, index) => (
-            <Card key={index} className="bg-slate-800 border-slate-700">
+            <Card
+              key={index}
+              className="cyber-card animate-slide-up hover:border-cyber-blue transition-all duration-300"
+              style={{ animationDelay: `${index * 0.1}s` }}
+            >
               <CardHeader>
                 <div className="mb-4">{feature.icon}</div>
                 <CardTitle className="text-white text-xl">
@@ -336,11 +342,11 @@ export default function Hero({ onSignUp, onSignIn }: HeroProps) {
       </section>
 
       {/* Benefits Section */}
-      <section className="bg-slate-900 py-20">
+      <section className="bg-slate-900/50 backdrop-blur-sm py-20">
         <div className="container mx-auto px-6">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             <div>
-              <h2 className="text-3xl md:text-4xl font-bold text-white mb-6">
+              <h2 className="text-3xl md:text-4xl font-bold text-white mb-6 text-enhanced">
                 Why Choose FeedbackPro?
               </h2>
               <p className="text-xl text-slate-400 mb-8">
@@ -357,33 +363,45 @@ export default function Hero({ onSignUp, onSignIn }: HeroProps) {
               </div>
             </div>
             <div className="grid grid-cols-2 gap-6">
-              <Card className="bg-slate-800 border-slate-700">
+              <Card
+                className="cyber-card animate-slide-up"
+                style={{ animationDelay: "0.1s" }}
+              >
                 <CardContent className="p-6 text-center">
-                  <div className="text-3xl font-bold text-[#1E90FF] mb-2">
+                  <div className="text-3xl font-bold text-cyber-blue mb-2">
                     10K+
                   </div>
                   <div className="text-slate-400">Surveys Created</div>
                 </CardContent>
               </Card>
-              <Card className="bg-slate-800 border-slate-700">
+              <Card
+                className="cyber-card animate-slide-up"
+                style={{ animationDelay: "0.2s" }}
+              >
                 <CardContent className="p-6 text-center">
-                  <div className="text-3xl font-bold text-[#39FF14] mb-2">
+                  <div className="text-3xl font-bold text-cyber-green mb-2">
                     500K+
                   </div>
                   <div className="text-slate-400">Responses Collected</div>
                 </CardContent>
               </Card>
-              <Card className="bg-slate-800 border-slate-700">
+              <Card
+                className="cyber-card animate-slide-up"
+                style={{ animationDelay: "0.3s" }}
+              >
                 <CardContent className="p-6 text-center">
-                  <div className="text-3xl font-bold text-[#1E90FF] mb-2">
+                  <div className="text-3xl font-bold text-cyber-blue mb-2">
                     99.9%
                   </div>
                   <div className="text-slate-400">Uptime</div>
                 </CardContent>
               </Card>
-              <Card className="bg-slate-800 border-slate-700">
+              <Card
+                className="cyber-card animate-slide-up"
+                style={{ animationDelay: "0.4s" }}
+              >
                 <CardContent className="p-6 text-center">
-                  <div className="text-3xl font-bold text-[#39FF14] mb-2">
+                  <div className="text-3xl font-bold text-cyber-green mb-2">
                     24/7
                   </div>
                   <div className="text-slate-400">Support</div>
@@ -397,7 +415,7 @@ export default function Hero({ onSignUp, onSignIn }: HeroProps) {
       {/* CTA Section */}
       <section className="container mx-auto px-6 py-20 text-center">
         <div className="max-w-3xl mx-auto">
-          <h2 className="text-3xl md:text-4xl font-bold text-white mb-6">
+          <h2 className="text-3xl md:text-4xl font-bold text-white mb-6 text-enhanced">
             Ready to Transform Your Feedback Collection?
           </h2>
           <p className="text-xl text-slate-400 mb-8">
@@ -408,7 +426,7 @@ export default function Hero({ onSignUp, onSignIn }: HeroProps) {
             <Button
               size="lg"
               onClick={onSignUp}
-              className="bg-[#1E90FF] hover:bg-[#1E90FF]/80 text-white px-8 py-3 text-lg"
+              className="cyber-button text-black px-8 py-3 text-lg font-semibold"
             >
               Start Free Trial
               <ArrowRight className="ml-2 h-5 w-5" />

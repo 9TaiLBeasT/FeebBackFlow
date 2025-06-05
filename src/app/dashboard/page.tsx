@@ -94,24 +94,26 @@ export default function Dashboard() {
 
   if (loading) {
     return (
-      <div className="flex h-screen bg-[#121212] items-center justify-center">
+      <div className="flex h-screen bg-gradient-cyber items-center justify-center font-orbitron">
         <div className="flex flex-col items-center space-y-4">
-          <div className="animate-spin rounded-full h-8 w-8 border-2 border-slate-600 border-t-[#1E90FF]"></div>
-          <div className="text-white text-lg">Loading Dashboard...</div>
+          <div className="animate-spin rounded-full h-8 w-8 border-2 border-slate-600 border-t-cyber-blue"></div>
+          <div className="text-white text-lg font-orbitron">
+            Loading Dashboard...
+          </div>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="flex h-screen bg-[#121212] text-[#E0E0E0]">
+    <div className="flex h-screen bg-gradient-cyber text-[#E0E0E0] font-orbitron">
       {/* Sidebar */}
       <DashboardSidebar user={user} onSignOut={handleSignOut} />
 
       {/* Main Content */}
       <div className="flex-1 flex flex-col overflow-hidden">
         {/* Header */}
-        <header className="h-16 border-b border-slate-800 flex items-center justify-between px-6">
+        <header className="h-16 border-b border-slate-800 flex items-center justify-between px-6 bg-slate-900/50 backdrop-blur-sm">
           <div className="relative w-64">
             <Search className="absolute left-2 top-1/2 transform -translate-y-1/2 text-slate-400 h-4 w-4" />
             <input
@@ -232,7 +234,9 @@ export default function Dashboard() {
         {/* Dashboard Content */}
         <main className="flex-1 overflow-y-auto p-6">
           <div className="mb-8">
-            <h1 className="text-2xl font-bold text-white mb-2">Dashboard</h1>
+            <h1 className="text-2xl font-bold text-cyber-blue mb-2 text-enhanced">
+              Dashboard
+            </h1>
             <p className="text-slate-400">
               Welcome back! Here's an overview of your feedback collection.
             </p>
@@ -240,9 +244,9 @@ export default function Dashboard() {
 
           {/* Quick Stats */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-            <Card className="bg-slate-800 border-slate-700">
+            <Card className="cyber-card animate-slide-up">
               <CardHeader className="pb-2">
-                <CardTitle className="text-sm font-medium text-slate-400">
+                <CardTitle className="text-sm font-medium text-cyber-blue">
                   Total Surveys
                 </CardTitle>
               </CardHeader>
@@ -250,15 +254,18 @@ export default function Dashboard() {
                 <div className="text-2xl font-bold text-white">
                   {stats.totalSurveys}
                 </div>
-                <p className="text-xs text-[#39FF14] mt-1">
+                <p className="text-xs text-cyber-green mt-1">
                   {stats.totalSurveys > 0 ? "Active" : "Get started"}
                 </p>
               </CardContent>
             </Card>
 
-            <Card className="bg-slate-800 border-slate-700">
+            <Card
+              className="cyber-card animate-slide-up"
+              style={{ animationDelay: "0.1s" }}
+            >
               <CardHeader className="pb-2">
-                <CardTitle className="text-sm font-medium text-slate-400">
+                <CardTitle className="text-sm font-medium text-cyber-purple">
                   Total Responses
                 </CardTitle>
               </CardHeader>
@@ -266,7 +273,7 @@ export default function Dashboard() {
                 <div className="text-2xl font-bold text-white">
                   {stats.totalResponses.toLocaleString()}
                 </div>
-                <p className="text-xs text-[#39FF14] mt-1">
+                <p className="text-xs text-cyber-green mt-1">
                   {stats.totalResponses > 0
                     ? "Collecting data"
                     : "No responses yet"}
@@ -274,9 +281,12 @@ export default function Dashboard() {
               </CardContent>
             </Card>
 
-            <Card className="bg-slate-800 border-slate-700">
+            <Card
+              className="cyber-card animate-slide-up"
+              style={{ animationDelay: "0.2s" }}
+            >
               <CardHeader className="pb-2">
-                <CardTitle className="text-sm font-medium text-slate-400">
+                <CardTitle className="text-sm font-medium text-cyber-orange">
                   Avg. Sentiment Score
                 </CardTitle>
               </CardHeader>
@@ -284,7 +294,7 @@ export default function Dashboard() {
                 <div className="text-2xl font-bold text-white">
                   {stats.avgSentiment.toFixed(1)}/5
                 </div>
-                <p className="text-xs text-[#39FF14] mt-1">
+                <p className="text-xs text-cyber-green mt-1">
                   {stats.avgSentiment > 0 ? "Good feedback" : "No data yet"}
                 </p>
               </CardContent>
@@ -294,7 +304,7 @@ export default function Dashboard() {
           {/* Analytics Summary */}
           <div className="mb-8">
             <div className="flex items-center justify-between mb-4">
-              <h2 className="text-xl font-bold text-white">
+              <h2 className="text-xl font-bold text-cyber-blue">
                 Analytics Overview
               </h2>
               <Button
@@ -321,9 +331,11 @@ export default function Dashboard() {
           {/* Survey List */}
           <div>
             <div className="flex items-center justify-between mb-4">
-              <h2 className="text-xl font-bold text-white">Recent Surveys</h2>
+              <h2 className="text-xl font-bold text-cyber-blue">
+                Recent Surveys
+              </h2>
               <Button
-                className="bg-[#1E90FF] hover:bg-[#1E90FF]/80 text-white"
+                className="cyber-button text-black font-semibold"
                 onClick={() => router.push("/surveys")}
               >
                 Create New Survey

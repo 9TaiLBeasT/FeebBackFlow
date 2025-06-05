@@ -418,21 +418,28 @@ export default function IntegrationsPage() {
 
   if (loading) {
     return (
-      <div className="flex h-screen bg-[#121212] items-center justify-center">
-        <div className="text-white">Loading...</div>
+      <div className="flex h-screen bg-gradient-cyber items-center justify-center font-orbitron">
+        <div className="flex flex-col items-center space-y-4">
+          <div className="animate-spin rounded-full h-8 w-8 border-2 border-slate-600 border-t-cyber-blue"></div>
+          <div className="text-white text-lg font-orbitron">
+            Loading Integrations...
+          </div>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="flex h-screen bg-[#121212] text-[#E0E0E0]">
+    <div className="flex h-screen bg-gradient-cyber text-[#E0E0E0] font-orbitron">
       <DashboardSidebar user={user} onSignOut={handleSignOut} />
 
       <div className="flex-1 flex flex-col overflow-hidden">
         {/* Header */}
-        <header className="h-16 border-b border-slate-800 flex items-center justify-between px-6">
+        <header className="h-16 border-b border-slate-800 flex items-center justify-between px-6 bg-slate-900/50 backdrop-blur-sm">
           <div className="flex items-center space-x-4">
-            <h1 className="text-2xl font-bold text-white">Integrations</h1>
+            <h1 className="text-2xl font-bold text-cyber-blue text-enhanced">
+              Integrations
+            </h1>
             <Badge variant="secondary" className="bg-slate-800 text-slate-300">
               {integrations.length} integrations
             </Badge>
@@ -482,7 +489,8 @@ export default function IntegrationsPage() {
                   return (
                     <Card
                       key={type.type}
-                      className="bg-slate-800 border-slate-700 hover:border-slate-600 transition-colors cursor-pointer"
+                      className="cyber-card hover:border-cyber-blue transition-all duration-300 cursor-pointer animate-slide-up"
+                      style={{ animationDelay: `${index * 0.1}s` }}
                       onClick={() => {
                         if (!hasIntegration) {
                           setSelectedType(type.type);
@@ -531,7 +539,7 @@ export default function IntegrationsPage() {
                   onOpenChange={setShowCreateDialog}
                 >
                   <DialogTrigger asChild>
-                    <Button className="bg-[#1E90FF] hover:bg-[#1E90FF]/80 text-white">
+                    <Button className="cyber-button text-black font-semibold">
                       <PlusCircle className="mr-2 h-4 w-4" />
                       Add Integration
                     </Button>
@@ -600,7 +608,7 @@ export default function IntegrationsPage() {
                         </Button>
                         <Button
                           onClick={createIntegration}
-                          className="bg-[#1E90FF] hover:bg-[#1E90FF]/80 text-white"
+                          className="cyber-button text-black font-semibold"
                           disabled={!newIntegration.name || !selectedType}
                         >
                           Create
@@ -620,7 +628,8 @@ export default function IntegrationsPage() {
                     return (
                       <Card
                         key={integration.id}
-                        className="bg-slate-800 border-slate-700 hover:border-slate-600 transition-colors"
+                        className="cyber-card hover:border-cyber-blue transition-all duration-300 animate-slide-up"
+                        style={{ animationDelay: `${index * 0.1}s` }}
                       >
                         <CardHeader className="pb-3">
                           <div className="flex justify-between items-start">
@@ -719,7 +728,7 @@ export default function IntegrationsPage() {
                   </p>
                   <Button
                     onClick={() => setShowCreateDialog(true)}
-                    className="bg-[#1E90FF] hover:bg-[#1E90FF]/80 text-white"
+                    className="cyber-button text-black font-semibold"
                   >
                     <PlusCircle className="mr-2 h-4 w-4" />
                     Add Your First Integration
@@ -767,7 +776,7 @@ export default function IntegrationsPage() {
                 </Button>
                 <Button
                   onClick={() => updateIntegration(editingIntegration)}
-                  className="bg-[#1E90FF] hover:bg-[#1E90FF]/80 text-white"
+                  className="cyber-button text-black font-semibold"
                 >
                   Save Changes
                 </Button>

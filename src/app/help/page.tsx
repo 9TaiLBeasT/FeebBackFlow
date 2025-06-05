@@ -193,11 +193,24 @@ export default function HelpPage() {
   const submitSupportTicket = async () => {
     setSubmittingTicket(true);
     try {
-      // In a real app, this would submit to your support system
+      // Simulate API call
       await new Promise((resolve) => setTimeout(resolve, 2000));
-      alert(
-        "Support ticket submitted successfully! We'll get back to you within 24 hours.",
-      );
+
+      // Show success notification
+      const notification = document.createElement("div");
+      notification.className =
+        "fixed top-4 right-4 bg-cyber-green text-black px-6 py-3 rounded-lg shadow-lg z-50 animate-slideIn font-orbitron font-semibold";
+      notification.textContent =
+        "✅ Support ticket submitted successfully! We'll get back to you within 24 hours.";
+      document.body.appendChild(notification);
+
+      setTimeout(() => {
+        if (document.body.contains(notification)) {
+          notification.style.opacity = "0";
+          setTimeout(() => notification.remove(), 200);
+        }
+      }, 5000);
+
       setSupportTicket({
         subject: "",
         message: "",
@@ -206,7 +219,21 @@ export default function HelpPage() {
       });
     } catch (error) {
       console.error("Error submitting ticket:", error);
-      alert("Failed to submit ticket. Please try again.");
+
+      // Show error notification
+      const notification = document.createElement("div");
+      notification.className =
+        "fixed top-4 right-4 bg-red-500 text-white px-6 py-3 rounded-lg shadow-lg z-50 animate-slideIn font-orbitron font-semibold";
+      notification.textContent =
+        "❌ Failed to submit ticket. Please try again.";
+      document.body.appendChild(notification);
+
+      setTimeout(() => {
+        if (document.body.contains(notification)) {
+          notification.style.opacity = "0";
+          setTimeout(() => notification.remove(), 200);
+        }
+      }, 5000);
     } finally {
       setSubmittingTicket(false);
     }
@@ -239,7 +266,7 @@ export default function HelpPage() {
         {/* Header */}
         <header className="h-16 border-b border-slate-800 flex items-center justify-between px-6 bg-slate-900/50 backdrop-blur-sm">
           <div className="flex items-center space-x-4">
-            <h1 className="text-2xl font-bold text-cyber-blue animate-glow-pulse">
+            <h1 className="text-2xl font-bold text-cyber-blue text-enhanced">
               Help & Support
             </h1>
             <Badge variant="secondary" className="bg-slate-800 text-slate-300">
@@ -253,8 +280,8 @@ export default function HelpPage() {
           <div className="max-w-6xl mx-auto space-y-8">
             {/* Hero Section */}
             <div className="text-center py-8 animate-fade-in">
-              <HelpCircle className="h-16 w-16 mx-auto mb-4 text-cyber-blue animate-glow-pulse" />
-              <h2 className="text-3xl font-bold text-white mb-4">
+              <HelpCircle className="h-16 w-16 mx-auto mb-4 text-cyber-blue" />
+              <h2 className="text-3xl font-bold text-white mb-4 text-enhanced">
                 How can we help you?
               </h2>
               <p className="text-slate-400 text-lg max-w-2xl mx-auto">
@@ -283,7 +310,51 @@ export default function HelpPage() {
               className="grid grid-cols-1 md:grid-cols-3 gap-6 animate-slide-up"
               style={{ animationDelay: "0.1s" }}
             >
-              <Card className="cyber-card hover:border-cyber-blue cursor-pointer transition-all duration-300">
+              <Card
+                className="cyber-card hover:border-cyber-blue cursor-pointer transition-all duration-300"
+                onClick={() => {
+                  // Live Chat Implementation
+                  const modal = document.createElement("div");
+                  modal.className =
+                    "fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50";
+                  modal.innerHTML = `
+                    <div class="bg-slate-800 rounded-lg p-6 max-w-md w-full mx-4 border border-cyber-blue">
+                      <div class="flex justify-between items-center mb-4">
+                        <h3 class="text-lg font-semibold text-cyber-blue flex items-center font-orbitron">
+                          <span class="text-2xl mr-2">💬</span>
+                          Live Chat Support
+                        </h3>
+                        <button class="text-slate-400 hover:text-white text-xl" onclick="this.closest('.fixed').remove()">&times;</button>
+                      </div>
+                      <div class="space-y-4">
+                        <div class="bg-slate-700 p-3 rounded-lg">
+                          <div class="flex items-start space-x-3">
+                            <div class="text-cyber-blue text-lg">🤖</div>
+                            <div>
+                              <p class="text-white font-medium">AI Assistant</p>
+                              <p class="text-slate-300 text-sm">Hello! I'm here to help you with any questions about FeedbackPro. How can I assist you today?</p>
+                              <p class="text-slate-400 text-xs mt-1">Just now</p>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="flex space-x-2">
+                          <input type="text" placeholder="Type your message..." class="flex-1 bg-slate-700 border border-slate-600 rounded px-3 py-2 text-white text-sm" />
+                          <button class="bg-cyber-blue text-black px-4 py-2 rounded font-semibold hover:bg-cyber-blue/80 transition-colors">Send</button>
+                        </div>
+                        <div class="text-center text-xs text-slate-400">
+                          💡 Try asking: "How do I create a survey?" or "How to view responses?"
+                        </div>
+                      </div>
+                    </div>
+                  `;
+                  document.body.appendChild(modal);
+
+                  // Close on backdrop click
+                  modal.addEventListener("click", (e) => {
+                    if (e.target === modal) modal.remove();
+                  });
+                }}
+              >
                 <CardContent className="p-6 text-center">
                   <MessageCircle className="h-12 w-12 mx-auto mb-4 text-cyber-blue" />
                   <h3 className="text-lg font-semibold text-white mb-2">
@@ -299,7 +370,57 @@ export default function HelpPage() {
                 </CardContent>
               </Card>
 
-              <Card className="cyber-card hover:border-cyber-purple cursor-pointer transition-all duration-300">
+              <Card
+                className="cyber-card hover:border-cyber-purple cursor-pointer transition-all duration-300"
+                onClick={() => {
+                  // Email Support Implementation
+                  const modal = document.createElement("div");
+                  modal.className =
+                    "fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50";
+                  modal.innerHTML = `
+                    <div class="bg-slate-800 rounded-lg p-6 max-w-md w-full mx-4 border border-cyber-purple">
+                      <div class="flex justify-between items-center mb-4">
+                        <h3 class="text-lg font-semibold text-cyber-purple flex items-center font-orbitron">
+                          <span class="text-2xl mr-2">📧</span>
+                          Email Support
+                        </h3>
+                        <button class="text-slate-400 hover:text-white text-xl" onclick="this.closest('.fixed').remove()">&times;</button>
+                      </div>
+                      <div class="space-y-4">
+                        <div class="text-center">
+                          <p class="text-white mb-4">Send us a detailed message and we'll get back to you within 2-4 hours.</p>
+                          <div class="space-y-2 text-sm">
+                            <div class="flex items-center justify-center space-x-2">
+                              <span class="text-cyber-purple">📧</span>
+                              <span class="text-white">support@feedbackpro.com</span>
+                            </div>
+                            <div class="flex items-center justify-center space-x-2">
+                              <span class="text-cyber-purple">⏱️</span>
+                              <span class="text-slate-300">Average response: 2-4 hours</span>
+                            </div>
+                            <div class="flex items-center justify-center space-x-2">
+                              <span class="text-cyber-purple">🌍</span>
+                              <span class="text-slate-300">Available 24/7</span>
+                            </div>
+                          </div>
+                        </div>
+                        <button 
+                          class="w-full bg-cyber-purple text-white py-2 rounded-lg font-semibold hover:bg-cyber-purple/80 transition-colors"
+                          onclick="window.open('mailto:support@feedbackpro.com?subject=FeedbackPro Support Request', '_blank'); this.closest('.fixed').remove();"
+                        >
+                          Open Email Client
+                        </button>
+                      </div>
+                    </div>
+                  `;
+                  document.body.appendChild(modal);
+
+                  // Close on backdrop click
+                  modal.addEventListener("click", (e) => {
+                    if (e.target === modal) modal.remove();
+                  });
+                }}
+              >
                 <CardContent className="p-6 text-center">
                   <Mail className="h-12 w-12 mx-auto mb-4 text-cyber-purple" />
                   <h3 className="text-lg font-semibold text-white mb-2">
@@ -314,7 +435,64 @@ export default function HelpPage() {
                 </CardContent>
               </Card>
 
-              <Card className="cyber-card hover:border-cyber-orange cursor-pointer transition-all duration-300">
+              <Card
+                className="cyber-card hover:border-cyber-orange cursor-pointer transition-all duration-300"
+                onClick={() => {
+                  // Phone Support Implementation
+                  const modal = document.createElement("div");
+                  modal.className =
+                    "fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50";
+                  modal.innerHTML = `
+                    <div class="bg-slate-800 rounded-lg p-6 max-w-md w-full mx-4 border border-cyber-orange">
+                      <div class="flex justify-between items-center mb-4">
+                        <h3 class="text-lg font-semibold text-cyber-orange flex items-center font-orbitron">
+                          <span class="text-2xl mr-2">📞</span>
+                          Phone Support
+                        </h3>
+                        <button class="text-slate-400 hover:text-white text-xl" onclick="this.closest('.fixed').remove()">&times;</button>
+                      </div>
+                      <div class="space-y-4">
+                        <div class="text-center">
+                          <p class="text-white mb-4">Call us directly for urgent issues and immediate assistance.</p>
+                          <div class="space-y-3 text-sm">
+                            <div class="bg-slate-700 p-3 rounded-lg">
+                              <div class="flex items-center justify-center space-x-2 mb-2">
+                                <span class="text-cyber-orange text-lg">📞</span>
+                                <span class="text-white font-semibold text-lg">+1 (555) 123-4567</span>
+                              </div>
+                              <p class="text-slate-300 text-xs">Main Support Line</p>
+                            </div>
+                            <div class="flex items-center justify-center space-x-2">
+                              <span class="text-cyber-orange">🕒</span>
+                              <span class="text-slate-300">Mon-Fri: 9AM-6PM EST</span>
+                            </div>
+                            <div class="flex items-center justify-center space-x-2">
+                              <span class="text-cyber-orange">🚨</span>
+                              <span class="text-slate-300">24/7 Emergency Line: +1 (555) 911-HELP</span>
+                            </div>
+                            <div class="flex items-center justify-center space-x-2">
+                              <span class="text-cyber-orange">⚡</span>
+                              <span class="text-slate-300">Average wait time: < 2 minutes</span>
+                            </div>
+                          </div>
+                        </div>
+                        <button 
+                          class="w-full bg-cyber-orange text-black py-2 rounded-lg font-semibold hover:bg-cyber-orange/80 transition-colors"
+                          onclick="window.open('tel:+15551234567', '_self'); this.closest('.fixed').remove();"
+                        >
+                          Call Now
+                        </button>
+                      </div>
+                    </div>
+                  `;
+                  document.body.appendChild(modal);
+
+                  // Close on backdrop click
+                  modal.addEventListener("click", (e) => {
+                    if (e.target === modal) modal.remove();
+                  });
+                }}
+              >
                 <CardContent className="p-6 text-center">
                   <Phone className="h-12 w-12 mx-auto mb-4 text-cyber-orange" />
                   <h3 className="text-lg font-semibold text-white mb-2">
@@ -348,6 +526,279 @@ export default function HelpPage() {
                       <div
                         key={index}
                         className="flex items-center space-x-3 p-4 bg-slate-800 rounded-lg hover:bg-slate-700 cursor-pointer transition-colors group"
+                        onClick={() => {
+                          // Resource click handler
+                          const modal = document.createElement("div");
+                          modal.className =
+                            "fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50";
+
+                          let modalContent = "";
+
+                          if (resource.title === "Getting Started Guide") {
+                            modalContent = `
+                              <div class="bg-slate-800 rounded-lg p-6 max-w-2xl w-full mx-4 border border-cyber-blue max-h-[80vh] overflow-y-auto">
+                                <div class="flex justify-between items-center mb-4">
+                                  <h3 class="text-xl font-semibold text-cyber-blue flex items-center font-orbitron">
+                                    <span class="text-2xl mr-2">📚</span>
+                                    Getting Started Guide
+                                  </h3>
+                                  <button class="text-slate-400 hover:text-white text-xl" onclick="this.closest('.fixed').remove()">&times;</button>
+                                </div>
+                                <div class="space-y-4 text-white">
+                                  <div class="bg-slate-700 p-4 rounded-lg">
+                                    <h4 class="text-cyber-blue font-semibold mb-2">Step 1: Create Your Account</h4>
+                                    <p class="text-sm text-slate-300">Sign up for FeedbackPro and verify your email address to get started.</p>
+                                  </div>
+                                  <div class="bg-slate-700 p-4 rounded-lg">
+                                    <h4 class="text-cyber-blue font-semibold mb-2">Step 2: Create Your First Survey</h4>
+                                    <p class="text-sm text-slate-300">Use our drag-and-drop builder to create questions and customize your survey design.</p>
+                                  </div>
+                                  <div class="bg-slate-700 p-4 rounded-lg">
+                                    <h4 class="text-cyber-blue font-semibold mb-2">Step 3: Distribute Your Survey</h4>
+                                    <p class="text-sm text-slate-300">Share via email, SMS, links, QR codes, or embed on your website.</p>
+                                  </div>
+                                  <div class="bg-slate-700 p-4 rounded-lg">
+                                    <h4 class="text-cyber-blue font-semibold mb-2">Step 4: Analyze Results</h4>
+                                    <p class="text-sm text-slate-300">View real-time analytics, sentiment analysis, and generate reports.</p>
+                                  </div>
+                                </div>
+                              </div>
+                            `;
+                          } else if (resource.title === "Video Tutorials") {
+                            modalContent = `
+                              <div class="bg-slate-800 rounded-lg p-6 max-w-2xl w-full mx-4 border border-cyber-purple max-h-[80vh] overflow-y-auto">
+                                <div class="flex justify-between items-center mb-4">
+                                  <h3 class="text-xl font-semibold text-cyber-purple flex items-center font-orbitron">
+                                    <span class="text-2xl mr-2">🎥</span>
+                                    Video Tutorials
+                                  </h3>
+                                  <button class="text-slate-400 hover:text-white text-xl" onclick="this.closest('.fixed').remove()">&times;</button>
+                                </div>
+                                <div class="space-y-4">
+                                  <div class="bg-slate-700 p-4 rounded-lg hover:bg-slate-600 cursor-pointer transition-colors">
+                                    <div class="flex items-center space-x-3">
+                                      <div class="text-cyber-purple text-2xl">▶️</div>
+                                      <div>
+                                        <h4 class="text-white font-semibold">Survey Builder Walkthrough</h4>
+                                        <p class="text-slate-300 text-sm">Learn how to create your first survey • 5:30</p>
+                                      </div>
+                                    </div>
+                                  </div>
+                                  <div class="bg-slate-700 p-4 rounded-lg hover:bg-slate-600 cursor-pointer transition-colors">
+                                    <div class="flex items-center space-x-3">
+                                      <div class="text-cyber-purple text-2xl">▶️</div>
+                                      <div>
+                                        <h4 class="text-white font-semibold">Distribution Methods</h4>
+                                        <p class="text-slate-300 text-sm">All the ways to share your surveys • 3:45</p>
+                                      </div>
+                                    </div>
+                                  </div>
+                                  <div class="bg-slate-700 p-4 rounded-lg hover:bg-slate-600 cursor-pointer transition-colors">
+                                    <div class="flex items-center space-x-3">
+                                      <div class="text-cyber-purple text-2xl">▶️</div>
+                                      <div>
+                                        <h4 class="text-white font-semibold">Analytics Dashboard Tour</h4>
+                                        <p class="text-slate-300 text-sm">Understanding your survey data • 7:20</p>
+                                      </div>
+                                    </div>
+                                  </div>
+                                  <div class="bg-slate-700 p-4 rounded-lg hover:bg-slate-600 cursor-pointer transition-colors">
+                                    <div class="flex items-center space-x-3">
+                                      <div class="text-cyber-purple text-2xl">▶️</div>
+                                      <div>
+                                        <h4 class="text-white font-semibold">Advanced Features</h4>
+                                        <p class="text-slate-300 text-sm">Automations, integrations & more • 12:15</p>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                            `;
+                          } else if (resource.title === "API Documentation") {
+                            modalContent = `
+                              <div class="bg-slate-800 rounded-lg p-6 max-w-2xl w-full mx-4 border border-cyber-green max-h-[80vh] overflow-y-auto">
+                                <div class="flex justify-between items-center mb-4">
+                                  <h3 class="text-xl font-semibold text-cyber-green flex items-center font-orbitron">
+                                    <span class="text-2xl mr-2">📄</span>
+                                    API Documentation
+                                  </h3>
+                                  <button class="text-slate-400 hover:text-white text-xl" onclick="this.closest('.fixed').remove()">&times;</button>
+                                </div>
+                                <div class="space-y-4">
+                                  <div class="bg-slate-700 p-4 rounded-lg">
+                                    <h4 class="text-cyber-green font-semibold mb-2">REST API Endpoints</h4>
+                                    <div class="space-y-2 text-sm">
+                                      <div class="flex items-center space-x-2">
+                                        <span class="bg-green-600 text-white px-2 py-1 rounded text-xs">GET</span>
+                                        <code class="text-slate-300">/api/surveys</code>
+                                      </div>
+                                      <div class="flex items-center space-x-2">
+                                        <span class="bg-blue-600 text-white px-2 py-1 rounded text-xs">POST</span>
+                                        <code class="text-slate-300">/api/surveys</code>
+                                      </div>
+                                      <div class="flex items-center space-x-2">
+                                        <span class="bg-green-600 text-white px-2 py-1 rounded text-xs">GET</span>
+                                        <code class="text-slate-300">/api/responses</code>
+                                      </div>
+                                    </div>
+                                  </div>
+                                  <div class="bg-slate-700 p-4 rounded-lg">
+                                    <h4 class="text-cyber-green font-semibold mb-2">Authentication</h4>
+                                    <p class="text-slate-300 text-sm">Use Bearer tokens for API authentication</p>
+                                    <code class="block bg-slate-900 p-2 rounded mt-2 text-xs text-slate-300">Authorization: Bearer YOUR_API_KEY</code>
+                                  </div>
+                                  <div class="bg-slate-700 p-4 rounded-lg">
+                                    <h4 class="text-cyber-green font-semibold mb-2">Rate Limits</h4>
+                                    <p class="text-slate-300 text-sm">1000 requests per hour for standard plans</p>
+                                  </div>
+                                </div>
+                              </div>
+                            `;
+                          } else if (resource.title === "Best Practices") {
+                            modalContent = `
+                              <div class="bg-slate-800 rounded-lg p-6 max-w-2xl w-full mx-4 border border-cyber-orange max-h-[80vh] overflow-y-auto">
+                                <div class="flex justify-between items-center mb-4">
+                                  <h3 class="text-xl font-semibold text-cyber-orange flex items-center font-orbitron">
+                                    <span class="text-2xl mr-2">⚡</span>
+                                    Best Practices
+                                  </h3>
+                                  <button class="text-slate-400 hover:text-white text-xl" onclick="this.closest('.fixed').remove()">&times;</button>
+                                </div>
+                                <div class="space-y-4">
+                                  <div class="bg-slate-700 p-4 rounded-lg">
+                                    <h4 class="text-cyber-orange font-semibold mb-2">📝 Survey Design</h4>
+                                    <ul class="text-slate-300 text-sm space-y-1">
+                                      <li>• Keep surveys short (5-10 questions max)</li>
+                                      <li>• Use clear, unbiased language</li>
+                                      <li>• Mix question types for engagement</li>
+                                      <li>• Test before distributing</li>
+                                    </ul>
+                                  </div>
+                                  <div class="bg-slate-700 p-4 rounded-lg">
+                                    <h4 class="text-cyber-orange font-semibold mb-2">📊 Distribution Tips</h4>
+                                    <ul class="text-slate-300 text-sm space-y-1">
+                                      <li>• Send at optimal times (Tue-Thu, 10AM-2PM)</li>
+                                      <li>• Personalize invitation messages</li>
+                                      <li>• Follow up with non-responders</li>
+                                      <li>• Use multiple channels for better reach</li>
+                                    </ul>
+                                  </div>
+                                  <div class="bg-slate-700 p-4 rounded-lg">
+                                    <h4 class="text-cyber-orange font-semibold mb-2">📈 Response Optimization</h4>
+                                    <ul class="text-slate-300 text-sm space-y-1">
+                                      <li>• Offer incentives for completion</li>
+                                      <li>• Show progress indicators</li>
+                                      <li>• Make surveys mobile-friendly</li>
+                                      <li>• Explain how data will be used</li>
+                                    </ul>
+                                  </div>
+                                </div>
+                              </div>
+                            `;
+                          } else if (resource.title === "Community Forum") {
+                            modalContent = `
+                              <div class="bg-slate-800 rounded-lg p-6 max-w-2xl w-full mx-4 border border-cyber-pink max-h-[80vh] overflow-y-auto">
+                                <div class="flex justify-between items-center mb-4">
+                                  <h3 class="text-xl font-semibold text-cyber-pink flex items-center font-orbitron">
+                                    <span class="text-2xl mr-2">👥</span>
+                                    Community Forum
+                                  </h3>
+                                  <button class="text-slate-400 hover:text-white text-xl" onclick="this.closest('.fixed').remove()">&times;</button>
+                                </div>
+                                <div class="space-y-4">
+                                  <div class="text-center mb-4">
+                                    <p class="text-white mb-4">Connect with other FeedbackPro users, share tips, and get help from the community.</p>
+                                  </div>
+                                  <div class="bg-slate-700 p-4 rounded-lg">
+                                    <h4 class="text-cyber-pink font-semibold mb-2">🔥 Popular Topics</h4>
+                                    <div class="space-y-2 text-sm">
+                                      <div class="flex justify-between items-center">
+                                        <span class="text-white">Survey Design Tips & Tricks</span>
+                                        <span class="text-slate-400">234 posts</span>
+                                      </div>
+                                      <div class="flex justify-between items-center">
+                                        <span class="text-white">Integration Help & Support</span>
+                                        <span class="text-slate-400">156 posts</span>
+                                      </div>
+                                      <div class="flex justify-between items-center">
+                                        <span class="text-white">Feature Requests</span>
+                                        <span class="text-slate-400">89 posts</span>
+                                      </div>
+                                    </div>
+                                  </div>
+                                  <div class="bg-slate-700 p-4 rounded-lg">
+                                    <h4 class="text-cyber-pink font-semibold mb-2">📊 Community Stats</h4>
+                                    <div class="grid grid-cols-2 gap-4 text-sm">
+                                      <div class="text-center">
+                                        <div class="text-white font-semibold">2,847</div>
+                                        <div class="text-slate-400">Active Members</div>
+                                      </div>
+                                      <div class="text-center">
+                                        <div class="text-white font-semibold">1,234</div>
+                                        <div class="text-slate-400">Discussions</div>
+                                      </div>
+                                    </div>
+                                  </div>
+                                  <button 
+                                    class="w-full bg-cyber-pink text-white py-2 rounded-lg font-semibold hover:bg-cyber-pink/80 transition-colors"
+                                    onclick="window.open('https://community.feedbackpro.com', '_blank'); this.closest('.fixed').remove();"
+                                  >
+                                    Join Community Forum
+                                  </button>
+                                </div>
+                              </div>
+                            `;
+                          } else {
+                            modalContent = `
+                              <div class="bg-slate-800 rounded-lg p-6 max-w-2xl w-full mx-4 border border-cyber-blue max-h-[80vh] overflow-y-auto">
+                                <div class="flex justify-between items-center mb-4">
+                                  <h3 class="text-xl font-semibold text-cyber-blue flex items-center font-orbitron">
+                                    <span class="text-2xl mr-2">📊</span>
+                                    Analytics Guide
+                                  </h3>
+                                  <button class="text-slate-400 hover:text-white text-xl" onclick="this.closest('.fixed').remove()">&times;</button>
+                                </div>
+                                <div class="space-y-4">
+                                  <div class="bg-slate-700 p-4 rounded-lg">
+                                    <h4 class="text-cyber-blue font-semibold mb-2">📈 Understanding Metrics</h4>
+                                    <ul class="text-slate-300 text-sm space-y-1">
+                                      <li>• Response Rate: % of people who completed your survey</li>
+                                      <li>• Completion Rate: % who finished after starting</li>
+                                      <li>• Sentiment Score: Overall emotional tone (1-5 scale)</li>
+                                      <li>• Drop-off Points: Where people stop responding</li>
+                                    </ul>
+                                  </div>
+                                  <div class="bg-slate-700 p-4 rounded-lg">
+                                    <h4 class="text-cyber-blue font-semibold mb-2">🎯 Key Performance Indicators</h4>
+                                    <ul class="text-slate-300 text-sm space-y-1">
+                                      <li>• Good response rate: 20-30%</li>
+                                      <li>• Excellent completion rate: 85%+</li>
+                                      <li>• Positive sentiment: 3.5+ average</li>
+                                      <li>• Low drop-off: <10% per question</li>
+                                    </ul>
+                                  </div>
+                                  <div class="bg-slate-700 p-4 rounded-lg">
+                                    <h4 class="text-cyber-blue font-semibold mb-2">📊 Advanced Analytics</h4>
+                                    <ul class="text-slate-300 text-sm space-y-1">
+                                      <li>• Keyword tagging for open responses</li>
+                                      <li>• Demographic breakdowns</li>
+                                      <li>• Time-based trend analysis</li>
+                                      <li>• Cross-survey comparisons</li>
+                                    </ul>
+                                  </div>
+                                </div>
+                              </div>
+                            `;
+                          }
+
+                          modal.innerHTML = modalContent;
+                          document.body.appendChild(modal);
+
+                          // Close on backdrop click
+                          modal.addEventListener("click", (e) => {
+                            if (e.target === modal) modal.remove();
+                          });
+                        }}
                       >
                         <IconComponent className="h-8 w-8 text-cyber-blue group-hover:text-cyber-purple transition-colors" />
                         <div className="flex-1">

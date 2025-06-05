@@ -34,7 +34,9 @@ export default function RootLayout({
       className={`${orbitron.variable} ${robotoMono.variable}`}
     >
       <Script src="https://api.tempolabs.ai/proxy-asset?url=https://storage.googleapis.com/tempo-public-assets/error-handling.js" />
-      <body className={`${orbitron.className} bg-gradient-cyber min-h-screen`}>
+      <body
+        className={`${orbitron.className} bg-gradient-cyber min-h-screen page-transition`}
+      >
         {children}
         <Toaster />
         <TempoInit />

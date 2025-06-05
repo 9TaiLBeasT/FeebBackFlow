@@ -1,3 +1,5 @@
+@import url("https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&family=Roboto+Mono:wght@300;400;500;600;700&display=swap");
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -64,7 +66,7 @@
     @apply border-border;
   }
   body {
-    @apply bg-background text-foreground;
+    @apply bg-gradient-cyber text-foreground font-orbitron;
   }
 }
 
@@ -91,47 +93,12 @@
   }
 }
 
-@keyframes glowPulse {
-  0%,
-  100% {
-    box-shadow:
-      0 0 5px #00d4ff,
-      0 0 10px #00d4ff;
-  }
-  50% {
-    box-shadow:
-      0 0 10px #00d4ff,
-      0 0 20px #00d4ff,
-      0 0 30px #00d4ff;
-  }
-}
-
-@keyframes borderGlow {
-  0%,
-  100% {
-    border-color: #00d4ff;
-    box-shadow: 0 0 5px rgba(0, 212, 255, 0.3);
-  }
-  50% {
-    border-color: #8b5cf6;
-    box-shadow: 0 0 10px rgba(139, 92, 246, 0.5);
-  }
-}
-
 .animate-fadeIn {
   animation: fadeIn 0.2s ease-out;
 }
 
 .animate-slideIn {
   animation: slideIn 0.3s ease-out;
-}
-
-.animate-glow-pulse {
-  animation: glowPulse 2s ease-in-out infinite;
-}
-
-.animate-border-glow {
-  animation: borderGlow 3s ease-in-out infinite;
 }
 
 .cyber-card {
@@ -236,7 +203,27 @@
 /* Improved button hover states */
 .btn-hover {
   transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(30, 144, 255, 0.3);
+  box-shadow: 0 4px 12px rgba(30, 144, 255, 0.2);
+}
+
+/* Enhanced text readability */
+.text-enhanced {
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+  letter-spacing: 0.025em;
+}
+
+/* Smooth page transitions */
+.page-transition {
+  transition: opacity 0.15s ease-in-out;
+}
+
+/* Performance optimizations */
+.will-change-transform {
+  will-change: transform;
+}
+
+.will-change-opacity {
+  will-change: opacity;
 }
 
 /* Better modal backdrop */

@@ -282,21 +282,28 @@ export default function AnalyticsPage() {
 
   if (loading) {
     return (
-      <div className="flex h-screen bg-[#121212] items-center justify-center">
-        <div className="text-white">Loading...</div>
+      <div className="flex h-screen bg-gradient-cyber items-center justify-center font-orbitron">
+        <div className="flex flex-col items-center space-y-4">
+          <div className="animate-spin rounded-full h-8 w-8 border-2 border-slate-600 border-t-cyber-blue"></div>
+          <div className="text-white text-lg font-orbitron">
+            Loading Analytics...
+          </div>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="flex h-screen bg-[#121212] text-[#E0E0E0]">
+    <div className="flex h-screen bg-gradient-cyber text-[#E0E0E0] font-orbitron">
       <DashboardSidebar user={user} onSignOut={handleSignOut} />
 
       <div className="flex-1 flex flex-col overflow-hidden">
         {/* Header */}
-        <header className="h-16 border-b border-slate-800 flex items-center justify-between px-6">
+        <header className="h-16 border-b border-slate-800 flex items-center justify-between px-6 bg-slate-900/50 backdrop-blur-sm">
           <div className="flex items-center space-x-4">
-            <h1 className="text-2xl font-bold text-white">Analytics</h1>
+            <h1 className="text-2xl font-bold text-cyber-blue text-enhanced">
+              Analytics
+            </h1>
           </div>
 
           <div className="flex items-center space-x-4">
@@ -388,9 +395,9 @@ export default function AnalyticsPage() {
 
           {/* Key Metrics */}
           <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-            <Card className="bg-slate-800 border-slate-700">
+            <Card className="cyber-card animate-slide-up">
               <CardHeader className="pb-2">
-                <CardTitle className="text-sm font-medium text-slate-400 flex items-center">
+                <CardTitle className="text-sm font-medium text-cyber-blue flex items-center">
                   <BarChart3 className="h-4 w-4 mr-2" />
                   Total Surveys
                 </CardTitle>
@@ -402,9 +409,12 @@ export default function AnalyticsPage() {
               </CardContent>
             </Card>
 
-            <Card className="bg-slate-800 border-slate-700">
+            <Card
+              className="cyber-card animate-slide-up"
+              style={{ animationDelay: "0.1s" }}
+            >
               <CardHeader className="pb-2">
-                <CardTitle className="text-sm font-medium text-slate-400 flex items-center">
+                <CardTitle className="text-sm font-medium text-cyber-purple flex items-center">
                   <MessageSquare className="h-4 w-4 mr-2" />
                   Total Responses
                 </CardTitle>
@@ -416,9 +426,12 @@ export default function AnalyticsPage() {
               </CardContent>
             </Card>
 
-            <Card className="bg-slate-800 border-slate-700">
+            <Card
+              className="cyber-card animate-slide-up"
+              style={{ animationDelay: "0.2s" }}
+            >
               <CardHeader className="pb-2">
-                <CardTitle className="text-sm font-medium text-slate-400 flex items-center">
+                <CardTitle className="text-sm font-medium text-cyber-green flex items-center">
                   <TrendingUp className="h-4 w-4 mr-2" />
                   Avg. Sentiment
                 </CardTitle>
@@ -431,9 +444,12 @@ export default function AnalyticsPage() {
               </CardContent>
             </Card>
 
-            <Card className="bg-slate-800 border-slate-700">
+            <Card
+              className="cyber-card animate-slide-up"
+              style={{ animationDelay: "0.3s" }}
+            >
               <CardHeader className="pb-2">
-                <CardTitle className="text-sm font-medium text-slate-400 flex items-center">
+                <CardTitle className="text-sm font-medium text-cyber-orange flex items-center">
                   <Target className="h-4 w-4 mr-2" />
                   Completion Rate
                 </CardTitle>
@@ -460,9 +476,12 @@ export default function AnalyticsPage() {
           {/* Additional Analytics */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             {/* Top Performing Surveys */}
-            <Card className="bg-slate-800 border-slate-700">
+            <Card
+              className="cyber-card animate-slide-up"
+              style={{ animationDelay: "0.4s" }}
+            >
               <CardHeader>
-                <CardTitle className="text-white">
+                <CardTitle className="text-cyber-blue">
                   Top Performing Surveys
                 </CardTitle>
               </CardHeader>
@@ -497,9 +516,14 @@ export default function AnalyticsPage() {
             </Card>
 
             {/* Response Channels */}
-            <Card className="bg-slate-800 border-slate-700">
+            <Card
+              className="cyber-card animate-slide-up"
+              style={{ animationDelay: "0.5s" }}
+            >
               <CardHeader>
-                <CardTitle className="text-white">Response Channels</CardTitle>
+                <CardTitle className="text-cyber-purple">
+                  Response Channels
+                </CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
@@ -518,6 +542,7 @@ export default function AnalyticsPage() {
                             style={{
                               width: `${(channel.count / analyticsData.totalResponses) * 100}%`,
                             }}
+                            className="bg-cyber-blue"
                           ></div>
                         </div>
                       </div>

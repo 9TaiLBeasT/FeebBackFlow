@@ -213,7 +213,7 @@ export default function SettingsPage() {
         {/* Header */}
         <header className="h-16 border-b border-slate-800 flex items-center justify-between px-6 bg-slate-900/50 backdrop-blur-sm">
           <div className="flex items-center space-x-4">
-            <h1 className="text-2xl font-bold text-cyber-blue animate-glow-pulse">
+            <h1 className="text-2xl font-bold text-cyber-blue text-enhanced">
               Settings
             </h1>
             <Badge variant="secondary" className="bg-slate-800 text-slate-300">

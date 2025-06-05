@@ -20,7 +20,10 @@ export default function Home() {
         data: { user },
       } = await supabase.auth.getUser();
       if (user) {
-        router.push("/dashboard");
+        // Add slight delay for smoother transition
+        setTimeout(() => {
+          router.push("/dashboard");
+        }, 100);
       }
     };
     checkUser();
@@ -36,7 +39,10 @@ export default function Home() {
 
   const handleAuthSuccess = () => {
     setAuthModal({ isOpen: false, mode: "signin" });
-    router.push("/dashboard");
+    // Add slight delay for smoother transition
+    setTimeout(() => {
+      router.push("/dashboard");
+    }, 100);
   };
 
   const handleCloseModal = () => {

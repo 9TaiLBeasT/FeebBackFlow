@@ -202,10 +202,12 @@ export default function SurveyBuilder({
   };
 
   return (
-    <div className="flex h-full w-full bg-background">
+    <div className="flex h-full w-full bg-gradient-cyber font-orbitron">
       {/* Left Sidebar - Question Types */}
-      <div className="w-64 border-r border-border bg-muted/30 p-4 flex flex-col">
-        <h3 className="text-lg font-semibold mb-4">Question Types</h3>
+      <div className="w-64 border-r border-slate-800 bg-slate-900/50 backdrop-blur-sm p-4 flex flex-col">
+        <h3 className="text-lg font-semibold mb-4 text-cyber-blue">
+          Question Types
+        </h3>
         <div className="space-y-2">
           <Button
             variant="outline"
@@ -253,8 +255,7 @@ export default function SurveyBuilder({
 
         <div className="mt-auto space-y-2">
           <Button
-            variant="default"
-            className="w-full"
+            className="w-full cyber-button text-black font-semibold"
             onClick={handleSaveSurvey}
             disabled={saving}
           >
@@ -290,7 +291,7 @@ export default function SurveyBuilder({
             {questions.map((question, index) => (
               <Card
                 key={question.id}
-                className={`border ${selectedQuestion === question.id ? "border-primary" : "border-border"}`}
+                className={`cyber-card ${selectedQuestion === question.id ? "border-cyber-blue" : "border-slate-700"} hover:border-cyber-blue transition-all duration-200`}
                 onClick={() => setSelectedQuestion(question.id)}
               >
                 <CardContent className="p-4">
@@ -404,7 +405,7 @@ export default function SurveyBuilder({
       </div>
 
       {/* Right Sidebar - Properties */}
-      <div className="w-80 border-l border-border bg-muted/30 p-4 overflow-y-auto">
+      <div className="w-80 border-l border-slate-800 bg-slate-900/50 backdrop-blur-sm p-4 overflow-y-auto">
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
           <TabsList className="grid w-full grid-cols-2">
             <TabsTrigger value="questions">Question</TabsTrigger>

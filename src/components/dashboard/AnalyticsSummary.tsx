@@ -43,14 +43,16 @@ const AnalyticsSummary = ({
       ? sentimentDistribution
       : defaultSentimentDistribution;
   return (
-    <div className="w-full bg-[#121212] text-[#E0E0E0] p-6 rounded-xl">
-      <h2 className="text-2xl font-bold mb-6 text-white">Analytics Summary</h2>
+    <div className="w-full bg-gradient-cyber text-[#E0E0E0] p-6 rounded-xl font-orbitron">
+      <h2 className="text-2xl font-bold mb-6 text-cyber-blue text-enhanced">
+        Analytics Summary
+      </h2>
 
       {/* Key Metrics Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-        <Card className="bg-[#1A1A1A] border-[#2F4F4F] text-[#E0E0E0]">
+        <Card className="cyber-card animate-slide-up">
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-[#1E90FF] flex items-center">
+            <CardTitle className="text-sm font-medium text-cyber-blue flex items-center">
               <BarChart className="h-4 w-4 mr-2" />
               Total Responses
             </CardTitle>
@@ -65,9 +67,12 @@ const AnalyticsSummary = ({
           </CardContent>
         </Card>
 
-        <Card className="bg-[#1A1A1A] border-[#2F4F4F] text-[#E0E0E0]">
+        <Card
+          className="cyber-card animate-slide-up"
+          style={{ animationDelay: "0.1s" }}
+        >
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-[#1E90FF] flex items-center">
+            <CardTitle className="text-sm font-medium text-cyber-purple flex items-center">
               <PieChart className="h-4 w-4 mr-2" />
               Average Sentiment
             </CardTitle>
@@ -84,9 +89,12 @@ const AnalyticsSummary = ({
           </CardContent>
         </Card>
 
-        <Card className="bg-[#1A1A1A] border-[#2F4F4F] text-[#E0E0E0]">
+        <Card
+          className="cyber-card animate-slide-up"
+          style={{ animationDelay: "0.2s" }}
+        >
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-[#1E90FF] flex items-center">
+            <CardTitle className="text-sm font-medium text-cyber-green flex items-center">
               <LineChart className="h-4 w-4 mr-2" />
               Completion Rate
             </CardTitle>
@@ -107,9 +115,12 @@ const AnalyticsSummary = ({
       {/* Charts */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Response Trend Chart */}
-        <Card className="bg-[#1A1A1A] border-[#2F4F4F] text-[#E0E0E0]">
+        <Card
+          className="cyber-card animate-slide-up"
+          style={{ animationDelay: "0.3s" }}
+        >
           <CardHeader>
-            <CardTitle className="text-white">Response Trend</CardTitle>
+            <CardTitle className="text-cyber-blue">Response Trend</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="h-[200px] flex items-end justify-between space-x-2">
@@ -121,7 +132,7 @@ const AnalyticsSummary = ({
                 return (
                   <div key={index} className="flex flex-col items-center">
                     <div
-                      className="bg-[#1E90FF] w-10 rounded-t-sm min-h-[2px]"
+                      className="bg-cyber-blue w-10 rounded-t-sm min-h-[2px]"
                       style={{
                         height: `${Math.max((day.count / maxCount) * 150, 2)}px`,
                       }}
@@ -135,9 +146,14 @@ const AnalyticsSummary = ({
         </Card>
 
         {/* Sentiment Distribution Chart */}
-        <Card className="bg-[#1A1A1A] border-[#2F4F4F] text-[#E0E0E0]">
+        <Card
+          className="cyber-card animate-slide-up"
+          style={{ animationDelay: "0.4s" }}
+        >
           <CardHeader>
-            <CardTitle className="text-white">Sentiment Distribution</CardTitle>
+            <CardTitle className="text-cyber-purple">
+              Sentiment Distribution
+            </CardTitle>
           </CardHeader>
           <CardContent>
             <div className="flex flex-col space-y-4">

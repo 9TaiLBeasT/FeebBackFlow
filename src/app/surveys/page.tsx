@@ -281,7 +281,9 @@ export default function SurveysPage() {
         {/* Header */}
         <header className="h-16 border-b border-slate-800 flex items-center justify-between px-6">
           <div className="flex items-center space-x-4">
-            <h1 className="text-2xl font-bold text-white">Surveys</h1>
+            <h1 className="text-2xl font-bold text-white text-enhanced">
+              Surveys
+            </h1>
             <Badge variant="secondary" className="bg-slate-800 text-slate-300">
               {surveys.length} total
             </Badge>

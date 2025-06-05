@@ -38,8 +38,9 @@ const NavItem = ({ href, icon, label, isActive = false }: NavItemProps) => {
       <Button
         variant="ghost"
         className={cn(
-          "w-full justify-start gap-3 px-3 py-6 text-sm font-medium text-muted-foreground hover:bg-slate-800 hover:text-white",
-          isActive && "bg-slate-800 text-white",
+          "w-full justify-start gap-3 px-3 py-6 text-sm font-medium text-muted-foreground hover:bg-slate-800 hover:text-cyber-blue transition-all duration-200",
+          isActive &&
+            "bg-slate-800 text-cyber-blue border-r-2 border-cyber-blue",
         )}
       >
         {icon}
@@ -89,11 +90,13 @@ export default function DashboardSidebar({
   ];
 
   return (
-    <div className="flex h-full w-[280px] flex-col bg-slate-900 text-white">
+    <div className="flex h-full w-[280px] flex-col bg-slate-900/90 backdrop-blur-sm text-white font-orbitron border-r border-slate-800">
       {/* Logo */}
       <div className="flex items-center gap-2 px-6 py-6">
-        <div className="h-8 w-8 rounded-md bg-[#1E90FF]"></div>
-        <h1 className="text-xl font-bold">FeedbackPro</h1>
+        <div className="h-8 w-8 rounded-md bg-cyber-blue"></div>
+        <h1 className="text-xl font-bold text-cyber-blue text-enhanced">
+          FeedbackPro
+        </h1>
       </div>
 
       {/* Navigation */}

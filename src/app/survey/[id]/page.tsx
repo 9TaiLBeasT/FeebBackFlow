@@ -56,7 +56,6 @@ export default function SurveyPage() {
         .from("surveys")
         .select("*")
         .eq("id", surveyId)
-        .eq("status", "active")
         .single();
 
       if (error) {
@@ -280,10 +279,12 @@ export default function SurveyPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-[#121212] flex items-center justify-center">
+      <div className="min-h-screen bg-gradient-cyber flex items-center justify-center font-orbitron">
         <div className="flex flex-col items-center space-y-4">
-          <div className="animate-spin rounded-full h-8 w-8 border-2 border-slate-600 border-t-[#1E90FF]"></div>
-          <div className="text-white text-lg">Loading Survey...</div>
+          <div className="animate-spin rounded-full h-8 w-8 border-2 border-slate-600 border-t-cyber-blue"></div>
+          <div className="text-white text-lg font-orbitron">
+            Loading Survey...
+          </div>
           <div className="text-slate-400 text-sm">
             Please wait while we prepare your survey
           </div>
@@ -294,7 +295,7 @@ export default function SurveyPage() {
 
   if (!loading && !survey) {
     return (
-      <div className="min-h-screen bg-[#121212] flex items-center justify-center">
+      <div className="min-h-screen bg-gradient-cyber flex items-center justify-center font-orbitron">
         <div className="text-center max-w-md mx-4">
           <div className="text-6xl mb-4">🔍</div>
           <h1 className="text-2xl font-bold text-white mb-4">
@@ -306,7 +307,7 @@ export default function SurveyPage() {
           </p>
           <button
             onClick={() => window.history.back()}
-            className="bg-[#1E90FF] hover:bg-[#1E90FF]/80 text-white px-6 py-2 rounded-lg transition-colors"
+            className="cyber-button text-black px-6 py-2 rounded-lg font-semibold"
           >
             Go Back
           </button>
@@ -317,10 +318,10 @@ export default function SurveyPage() {
 
   if (submitted) {
     return (
-      <div className="min-h-screen bg-[#121212] flex items-center justify-center">
-        <Card className="bg-slate-800 border-slate-700 max-w-md w-full mx-4">
+      <div className="min-h-screen bg-gradient-cyber flex items-center justify-center font-orbitron">
+        <Card className="cyber-card max-w-md w-full mx-4 animate-scale-in">
           <CardContent className="p-8 text-center">
-            <div className="text-[#39FF14] text-6xl mb-4">✓</div>
+            <div className="text-cyber-green text-6xl mb-4">✓</div>
             <h1 className="text-2xl font-bold text-white mb-4">Thank You!</h1>
             <p className="text-slate-400 mb-6">
               Your response has been submitted successfully. We appreciate your
@@ -328,7 +329,7 @@ export default function SurveyPage() {
             </p>
             <Button
               onClick={() => window.close()}
-              className="bg-[#1E90FF] hover:bg-[#1E90FF]/80 text-white"
+              className="cyber-button text-black font-semibold"
             >
               Close
             </Button>
@@ -353,11 +354,13 @@ export default function SurveyPage() {
     : false;
 
   return (
-    <div className="min-h-screen bg-[#121212] py-8">
+    <div className="min-h-screen bg-gradient-cyber py-8 font-orbitron">
       <div className="max-w-2xl mx-auto px-4">
         {/* Header */}
         <div className="mb-8 text-center">
-          <h1 className="text-3xl font-bold text-white mb-2">{survey.title}</h1>
+          <h1 className="text-3xl font-bold text-white mb-2 text-enhanced">
+            {survey.title}
+          </h1>
           <p className="text-slate-400">{survey.description}</p>
         </div>
 
@@ -374,7 +377,7 @@ export default function SurveyPage() {
 
         {/* Question Card */}
         {currentQuestion && (
-          <Card className="bg-slate-800 border-slate-700 mb-8">
+          <Card className="cyber-card mb-8 animate-slide-up">
             <CardHeader>
               <CardTitle className="text-white text-xl">
                 {currentQuestion?.title || "Question"}
@@ -392,7 +395,10 @@ export default function SurveyPage() {
 
         {/* Email Input (on last question) */}
         {isLastQuestion && (
-          <Card className="bg-slate-800 border-slate-700 mb-8">
+          <Card
+            className="cyber-card mb-8 animate-slide-up"
+            style={{ animationDelay: "0.1s" }}
+          >
             <CardHeader>
               <CardTitle className="text-white text-lg">
                 Contact Information (Optional)
@@ -426,7 +432,7 @@ export default function SurveyPage() {
             <Button
               onClick={handleSubmit}
               disabled={!canProceed || submitting}
-              className="bg-[#39FF14] hover:bg-[#39FF14]/80 text-black font-semibold"
+              className="cyber-button text-black font-semibold"
             >
               <Send className="h-4 w-4 mr-2" />
               {submitting ? "Submitting..." : "Submit Survey"}
@@ -435,7 +441,7 @@ export default function SurveyPage() {
             <Button
               onClick={handleNext}
               disabled={!canProceed}
-              className="bg-[#1E90FF] hover:bg-[#1E90FF]/80 text-white"
+              className="bg-cyber-blue hover:bg-cyber-blue/80 text-black font-semibold"
             >
               Next
               <ArrowRight className="h-4 w-4 ml-2" />
