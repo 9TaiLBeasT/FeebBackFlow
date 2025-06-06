@@ -14,7 +14,7 @@ import {
   Download,
   Eye,
   Calendar,
-  User,
+  User as UserIcon,
   MessageSquare,
   TrendingUp,
   TrendingDown,
@@ -319,7 +319,7 @@ export default function ResponsesPage() {
                         </CardTitle>
                         <div className="flex items-center space-x-4 text-sm text-slate-400">
                           <div className="flex items-center">
-                            <User className="h-4 w-4 mr-1" />
+                            <UserIcon className="h-4 w-4 mr-1" />
                             {response.respondent_name ||
                               response.respondent_email ||
                               "Anonymous"}

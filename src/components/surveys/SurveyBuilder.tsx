@@ -10,6 +10,7 @@ import {
   X,
   ChevronDown,
   ChevronRight,
+  Send,
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -29,6 +30,14 @@ import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { supabase } from "@/lib/supabase";
 import { useRouter } from "next/navigation";
+import SurveyDistribution from "./SurveyDistribution";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 
 interface QuestionType {
   id: string;
@@ -91,6 +100,7 @@ export default function SurveyBuilder({
   );
   const [activeTab, setActiveTab] = useState("questions");
   const [saving, setSaving] = useState(false);
+  const [showDistribution, setShowDistribution] = useState(false);
   const router = useRouter();
 
   const addQuestion = (type: string) => {
@@ -266,6 +276,31 @@ export default function SurveyBuilder({
             <Eye className="mr-2 h-4 w-4" />
             Preview
           </Button>
+          {survey?.id && (
+            <Dialog open={showDistribution} onOpenChange={setShowDistribution}>
+              <DialogTrigger asChild>
+                <Button variant="outline" className="w-full">
+                  <Send className="mr-2 h-4 w-4" />
+                  Distribute
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="max-w-6xl max-h-[90vh] overflow-y-auto bg-slate-900 border-slate-700">
+                <DialogHeader>
+                  <DialogTitle className="text-white">
+                    Distribute Survey
+                  </DialogTitle>
+                </DialogHeader>
+                <SurveyDistribution
+                  survey={{
+                    id: survey.id,
+                    title: surveyTitle,
+                    status: survey.status || "draft",
+                  }}
+                  onClose={() => setShowDistribution(false)}
+                />
+              </DialogContent>
+            </Dialog>
+          )}
         </div>
       </div>
 

@@ -80,7 +80,7 @@ export default function SurveyPage() {
 
       // Validate each question has required properties
       const validQuestions = data.questions.filter(
-        (q) => q && typeof q === "object" && q.id && q.type && q.title,
+        (q: any) => q && typeof q === "object" && q.id && q.type && q.title,
       );
 
       if (validQuestions.length === 0) {
@@ -89,7 +89,7 @@ export default function SurveyPage() {
       }
 
       // Ensure all questions have required property with proper null safety
-      const questionsWithDefaults = validQuestions.map((q) => ({
+      const questionsWithDefaults = validQuestions.map((q: any) => ({
         id: q?.id || `q_${Math.random().toString(36).substr(2, 9)}`,
         type: q?.type || "open-ended",
         title: q?.title || "Untitled Question",
@@ -136,8 +136,9 @@ export default function SurveyPage() {
     try {
       // Calculate completion rate
       const answeredQuestions = Object.keys(responses).length;
-      const completionRate =
-        (answeredQuestions / survey.questions.length) * 100;
+      const completionRate = survey.questions?.length
+        ? (answeredQuestions / survey.questions.length) * 100
+        : 0;
 
       // Simple sentiment analysis (mock implementation)
       const sentimentScore = Math.random() * 5; // In real app, use actual sentiment analysis
@@ -359,16 +360,17 @@ export default function SurveyPage() {
         {/* Header */}
         <div className="mb-8 text-center">
           <h1 className="text-3xl font-bold text-white mb-2 text-enhanced">
-            {survey.title}
+            {survey?.title || "Survey"}
           </h1>
-          <p className="text-slate-400">{survey.description}</p>
+          <p className="text-slate-400">{survey?.description || ""}</p>
         </div>
 
         {/* Progress Bar */}
         <div className="mb-8">
           <div className="flex justify-between text-sm text-slate-400 mb-2">
             <span>
-              Question {currentQuestionIndex + 1} of {survey.questions.length}
+              Question {currentQuestionIndex + 1} of{" "}
+              {survey?.questions?.length || 0}
             </span>
             <span>{Math.round(progress)}% Complete</span>
           </div>

@@ -480,7 +480,7 @@ export default function IntegrationsPage() {
                 Available Integrations
               </h2>
               <div className="space-y-4">
-                {integrationTypes.map((type) => {
+                {integrationTypes.map((type, index) => {
                   const Icon = type.icon;
                   const hasIntegration = integrations.some(
                     (i) => i.type === type.type,
@@ -491,16 +491,6 @@ export default function IntegrationsPage() {
                       key={type.type}
                       className="cyber-card hover:border-cyber-blue transition-all duration-300 cursor-pointer animate-slide-up"
                       style={{ animationDelay: `${index * 0.1}s` }}
-                      onClick={() => {
-                        if (!hasIntegration) {
-                          setSelectedType(type.type);
-                          setNewIntegration({
-                            ...newIntegration,
-                            type: type.type as any,
-                          });
-                          setShowCreateDialog(true);
-                        }
-                      }}
                     >
                       <CardContent className="p-4">
                         <div className="flex items-center space-x-3">
@@ -621,7 +611,7 @@ export default function IntegrationsPage() {
 
               {integrations.length > 0 ? (
                 <div className="space-y-4">
-                  {integrations.map((integration) => {
+                  {integrations.map((integration, index) => {
                     const typeInfo = getIntegrationTypeInfo(integration.type);
                     const Icon = typeInfo.icon;
 

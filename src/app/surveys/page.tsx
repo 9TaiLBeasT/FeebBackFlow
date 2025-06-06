@@ -9,6 +9,7 @@ import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import DashboardSidebar from "@/components/dashboard/DashboardSidebar";
 import SurveyBuilder from "@/components/surveys/SurveyBuilder";
+import SurveyDistribution from "@/components/surveys/SurveyDistribution";
 import {
   PlusCircle,
   Search,
@@ -22,6 +23,7 @@ import {
   Pause,
   Copy,
   Trash2,
+  Send,
 } from "lucide-react";
 import {
   DropdownMenu,
@@ -52,6 +54,7 @@ export default function SurveysPage() {
   const [searchTerm, setSearchTerm] = useState("");
   const [filterStatus, setFilterStatus] = useState<string>("all");
   const [showBuilder, setShowBuilder] = useState(false);
+  const [showDistribution, setShowDistribution] = useState(false);
   const [selectedSurvey, setSelectedSurvey] = useState<Survey | null>(null);
   const router = useRouter();
 
@@ -273,6 +276,38 @@ export default function SurveysPage() {
     );
   }
 
+  if (showDistribution && selectedSurvey) {
+    return (
+      <div className="flex h-screen bg-[#121212]">
+        <DashboardSidebar user={user} onSignOut={handleSignOut} />
+        <div className="flex-1">
+          <div className="h-16 border-b border-slate-800 flex items-center justify-between px-6">
+            <h1 className="text-xl font-bold text-white">Distribute Survey</h1>
+            <Button
+              variant="outline"
+              onClick={() => {
+                setShowDistribution(false);
+                setSelectedSurvey(null);
+              }}
+              className="border-slate-700 text-slate-400 hover:text-white"
+            >
+              Back to Surveys
+            </Button>
+          </div>
+          <div className="flex-1 overflow-auto">
+            <SurveyDistribution
+              survey={selectedSurvey}
+              onClose={() => {
+                setShowDistribution(false);
+                setSelectedSurvey(null);
+              }}
+            />
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="flex h-screen bg-[#121212] text-[#E0E0E0]">
       <DashboardSidebar user={user} onSignOut={handleSignOut} />
@@ -446,6 +481,17 @@ export default function SurveysPage() {
                             className="border-slate-600 bg-slate-700 hover:bg-slate-600 text-white"
                           >
                             <Edit className="h-4 w-4 mr-1" /> Edit
+                          </Button>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => {
+                              setSelectedSurvey(survey);
+                              setShowDistribution(true);
+                            }}
+                            className="border-slate-600 bg-slate-700 hover:bg-slate-600 text-white"
+                          >
+                            <Send className="h-4 w-4 mr-1" /> Distribute
                           </Button>
                           {survey.status === "active" ? (
                             <Button
