@@ -418,7 +418,7 @@ export default function AutomationsPage() {
 
               {automations.length > 0 ? (
                 <div className="space-y-4">
-                  {automations.map((automation) => (
+                  {automations.map((automation, index) => (
                     <Card
                       key={automation.id}
                       className="cyber-card hover:border-cyber-blue transition-all duration-300 animate-slide-up"
