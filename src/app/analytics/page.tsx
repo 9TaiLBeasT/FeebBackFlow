@@ -538,11 +538,10 @@ export default function AnalyticsPage() {
                         </p>
                         <div className="w-full bg-slate-700 rounded-full h-2 mt-1">
                           <div
-                            className="bg-[#1E90FF] h-2 rounded-full"
+                            className="bg-cyber-blue h-2 rounded-full"
                             style={{
                               width: `${(channel.count / analyticsData.totalResponses) * 100}%`,
                             }}
-                            className="bg-cyber-blue"
                           ></div>
                         </div>
                       </div>
