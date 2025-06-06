@@ -91,14 +91,8 @@ CREATE TABLE IF NOT EXISTS public.survey_distributions (
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
-alter publication supabase_realtime add table users;
-alter publication supabase_realtime add table surveys;
-alter publication supabase_realtime add table survey_responses;
-alter publication supabase_realtime add table analytics;
-alter publication supabase_realtime add table automations;
-alter publication supabase_realtime add table integrations;
-alter publication supabase_realtime add table automation_logs;
-alter publication supabase_realtime add table survey_distributions;
+-- Realtime publication setup is handled automatically by Supabase
+-- Removing explicit publication statements to avoid conflicts
 
 CREATE OR REPLACE FUNCTION public.handle_new_user()
 RETURNS TRIGGER AS $$
@@ -125,18 +119,32 @@ BEGIN
   VALUES (
     NEW.survey_id,
     1,
-    NEW.sentiment_score,
-    NEW.completion_rate
+    COALESCE(NEW.sentiment_score, 0),
+    COALESCE(NEW.completion_rate, 100)
   )
   ON CONFLICT (survey_id) DO UPDATE SET
-    total_responses = analytics.total_responses + 1,
-    average_sentiment = (analytics.average_sentiment * analytics.total_responses + NEW.sentiment_score) / (analytics.total_responses + 1),
-    completion_rate = (analytics.completion_rate * analytics.total_responses + NEW.completion_rate) / (analytics.total_responses + 1),
+    total_responses = EXCLUDED.total_responses + analytics.total_responses,
+    average_sentiment = CASE 
+      WHEN NEW.sentiment_score IS NOT NULL THEN
+        (COALESCE(analytics.average_sentiment, 0) * analytics.total_responses + NEW.sentiment_score) / (analytics.total_responses + 1)
+      ELSE analytics.average_sentiment
+    END,
+    completion_rate = CASE 
+      WHEN NEW.completion_rate IS NOT NULL THEN
+        (COALESCE(analytics.completion_rate, 0) * analytics.total_responses + NEW.completion_rate) / (analytics.total_responses + 1)
+      ELSE analytics.completion_rate
+    END,
     updated_at = NOW();
   
   RETURN NEW;
 END;
 $$ LANGUAGE plpgsql;
+
+-- Add unique constraint for analytics
+ALTER TABLE public.analytics ADD CONSTRAINT analytics_survey_id_unique UNIQUE (survey_id);
+
+-- Realtime is enabled by default for new tables in Supabase
+-- Removing explicit publication statements to avoid conflicts
 
 CREATE OR REPLACE TRIGGER on_survey_response_created
   AFTER INSERT ON public.survey_responses

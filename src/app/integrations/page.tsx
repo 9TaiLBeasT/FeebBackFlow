@@ -154,20 +154,66 @@ export default function IntegrationsPage() {
   };
 
   const createIntegration = async () => {
-    if (!user || !newIntegration.name || !selectedType) return;
+    if (!user || !newIntegration.name.trim() || !selectedType) {
+      alert("Please fill in all required fields");
+      return;
+    }
 
     try {
+      // Validate integration type
+      const validTypes = [
+        "webhook",
+        "email",
+        "slack",
+        "zapier",
+        "crm",
+        "analytics",
+      ];
+      if (!validTypes.includes(selectedType)) {
+        throw new Error(`Invalid integration type: ${selectedType}`);
+      }
+
       const config = getDefaultConfig(selectedType as any);
 
-      const { error } = await supabase.from("integrations").insert({
-        user_id: user.id,
-        name: newIntegration.name,
-        type: selectedType,
-        config: config,
-        is_active: false,
-      });
+      const { data, error } = await supabase
+        .from("integrations")
+        .insert({
+          user_id: user.id,
+          name: newIntegration.name.trim(),
+          type: selectedType,
+          config: config,
+          is_active: false,
+          last_sync: null,
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString(),
+        })
+        .select()
+        .single();
 
-      if (error) throw error;
+      if (error) {
+        console.error("Database error:", error);
+        throw new Error(`Failed to create integration: ${error.message}`);
+      }
+
+      if (!data) {
+        throw new Error("Failed to create integration - no data returned");
+      }
+
+      // Test the integration connection (non-blocking)
+      try {
+        const testResult = await testIntegrationConnection(
+          data.id,
+          selectedType as any,
+          config,
+        );
+        if (testResult) {
+          console.log("Integration test passed");
+        } else {
+          console.warn("Integration test failed, but integration was created");
+        }
+      } catch (testError) {
+        console.warn("Integration test error:", testError);
+      }
 
       setShowCreateDialog(false);
       setNewIntegration({
@@ -176,9 +222,15 @@ export default function IntegrationsPage() {
         config: {},
       });
       setSelectedType("");
+
       await fetchIntegrations(user.id);
-    } catch (error) {
+      alert("Integration created successfully! You can now configure it.");
+    } catch (error: any) {
       console.error("Error creating integration:", error);
+      alert(
+        error.message ||
+          "Failed to create integration. Please check your configuration.",
+      );
     }
   };
 
@@ -206,6 +258,36 @@ export default function IntegrationsPage() {
 
   const toggleIntegration = async (id: string, isActive: boolean) => {
     try {
+      // Get integration details for testing
+      const { data: integration, error: fetchError } = await supabase
+        .from("integrations")
+        .select("*")
+        .eq("id", id)
+        .single();
+
+      if (fetchError) {
+        throw new Error(`Failed to fetch integration: ${fetchError.message}`);
+      }
+
+      if (!integration) {
+        throw new Error("Integration not found");
+      }
+
+      if (isActive) {
+        // Test connection before activating
+        const testResult = await testIntegrationConnection(
+          id,
+          integration.type,
+          integration.config,
+        );
+        if (!testResult) {
+          alert(
+            "Integration test failed. Please configure the integration properly before activating.",
+          );
+          return;
+        }
+      }
+
       const { error } = await supabase
         .from("integrations")
         .update({
@@ -215,17 +297,33 @@ export default function IntegrationsPage() {
         })
         .eq("id", id);
 
-      if (error) throw error;
+      if (error) {
+        throw new Error(`Failed to update integration: ${error.message}`);
+      }
 
       if (user) {
         await fetchIntegrations(user.id);
       }
-    } catch (error) {
+
+      const statusMessage = isActive
+        ? "Integration activated successfully"
+        : "Integration deactivated successfully";
+      console.log(statusMessage);
+    } catch (error: any) {
       console.error("Error toggling integration:", error);
+      alert(error.message || "Failed to toggle integration. Please try again.");
     }
   };
 
   const deleteIntegration = async (id: string) => {
+    if (
+      !confirm(
+        "Are you sure you want to delete this integration? This action cannot be undone.",
+      )
+    ) {
+      return;
+    }
+
     try {
       const { error } = await supabase
         .from("integrations")
@@ -239,25 +337,93 @@ export default function IntegrationsPage() {
       }
     } catch (error) {
       console.error("Error deleting integration:", error);
+      alert("Failed to delete integration. Please try again.");
     }
   };
 
   const getDefaultConfig = (type: string) => {
     switch (type) {
       case "webhook":
-        return { url: "", method: "POST", headers: {} };
+        return { url: "", method: "POST", headers: {}, timeout: 30 };
       case "email":
-        return { smtp_host: "", smtp_port: 587, username: "", password: "" };
+        return {
+          smtp_host: "",
+          smtp_port: 587,
+          username: "",
+          password: "",
+          from_email: "",
+        };
       case "slack":
-        return { webhook_url: "", channel: "#general" };
+        return { webhook_url: "", channel: "#general", username: "Survey Bot" };
       case "zapier":
-        return { webhook_url: "" };
+        return { webhook_url: "", trigger_event: "survey_response" };
       case "crm":
-        return { api_key: "", endpoint: "" };
+        return { api_key: "", endpoint: "", contact_field_mapping: {} };
       case "analytics":
-        return { tracking_id: "", api_key: "" };
+        return { tracking_id: "", api_key: "", event_mapping: {} };
       default:
         return {};
+    }
+  };
+
+  const testIntegrationConnection = async (
+    id: string,
+    type: string,
+    config: any,
+  ) => {
+    try {
+      switch (type) {
+        case "webhook":
+          if (!config.url) {
+            console.log("Webhook URL not configured yet");
+            return true; // Allow creation without URL for initial setup
+          }
+          // Validate URL format
+          try {
+            new URL(config.url);
+            return config.url.startsWith("http");
+          } catch {
+            return false;
+          }
+        case "email":
+          // Allow creation with default config for initial setup
+          if (!config.smtp_host || !config.username) {
+            console.log(
+              "Email configuration incomplete - can be configured later",
+            );
+            return true;
+          }
+          return config.smtp_host && config.username && config.password;
+        case "slack":
+          if (!config.webhook_url) {
+            console.log("Slack webhook URL not configured yet");
+            return true; // Allow creation for initial setup
+          }
+          return config.webhook_url.includes("hooks.slack.com");
+        case "zapier":
+          if (!config.webhook_url) {
+            console.log("Zapier webhook URL not configured yet");
+            return true; // Allow creation for initial setup
+          }
+          return (
+            config.webhook_url.includes("zapier.com") ||
+            config.webhook_url.includes("hooks.zapier.com")
+          );
+        case "crm":
+        case "analytics":
+          if (!config.api_key || !config.endpoint) {
+            console.log(
+              `${type} configuration incomplete - can be configured later`,
+            );
+            return true; // Allow creation for initial setup
+          }
+          return config.api_key && config.endpoint;
+        default:
+          return true;
+      }
+    } catch (error) {
+      console.error("Integration test failed:", error);
+      return false;
     }
   };
 

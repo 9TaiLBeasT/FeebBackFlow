@@ -139,20 +139,90 @@ export default function AutomationsPage() {
   };
 
   const createAutomation = async () => {
-    if (!user || !newAutomation.name) return;
+    if (!user || !newAutomation.name.trim()) {
+      alert("Please enter a name for the automation");
+      return;
+    }
 
     try {
-      const { error } = await supabase.from("automations").insert({
-        user_id: user.id,
-        name: newAutomation.name,
-        description: newAutomation.description,
-        trigger_type: newAutomation.trigger_type,
-        trigger_conditions: newAutomation.trigger_conditions,
-        actions: newAutomation.actions,
-        is_active: true,
-      });
+      // Validate trigger type
+      const validTriggerTypes = [
+        "response_received",
+        "survey_completed",
+        "sentiment_threshold",
+        "time_based",
+      ];
+      if (!validTriggerTypes.includes(newAutomation.trigger_type)) {
+        throw new Error(`Invalid trigger type: ${newAutomation.trigger_type}`);
+      }
 
-      if (error) throw error;
+      // Set default actions based on trigger type
+      const defaultActions = [
+        {
+          type: "email",
+          config: {
+            to: user.email || "admin@example.com",
+            subject: `Automation: ${newAutomation.name}`,
+            body: "Automation triggered successfully",
+          },
+        },
+      ];
+
+      // Set default trigger conditions based on trigger type
+      let defaultConditions = {};
+      switch (newAutomation.trigger_type) {
+        case "sentiment_threshold":
+          defaultConditions = { threshold: 3.0, operator: "less_than" };
+          break;
+        case "response_received":
+          defaultConditions = { survey_id: "any" };
+          break;
+        case "survey_completed":
+          defaultConditions = { completion_rate: 100 };
+          break;
+        case "time_based":
+          defaultConditions = { schedule: "daily", time: "09:00" };
+          break;
+        default:
+          defaultConditions = {};
+      }
+
+      const { data, error } = await supabase
+        .from("automations")
+        .insert({
+          user_id: user.id,
+          name: newAutomation.name.trim(),
+          description: newAutomation.description.trim() || null,
+          trigger_type: newAutomation.trigger_type,
+          trigger_conditions: defaultConditions,
+          actions: defaultActions,
+          is_active: true,
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString(),
+        })
+        .select()
+        .single();
+
+      if (error) {
+        console.error("Database error:", error);
+        throw new Error(`Failed to create automation: ${error.message}`);
+      }
+
+      if (!data) {
+        throw new Error("Failed to create automation - no data returned");
+      }
+
+      // Log the automation creation
+      try {
+        await supabase.from("automation_logs").insert({
+          automation_id: data.id,
+          status: "success",
+          error_message: null,
+          executed_at: new Date().toISOString(),
+        });
+      } catch (logError) {
+        console.warn("Failed to log automation creation:", logError);
+      }
 
       setShowCreateDialog(false);
       setNewAutomation({
@@ -162,9 +232,27 @@ export default function AutomationsPage() {
         trigger_conditions: {},
         actions: [],
       });
+
       await fetchAutomations(user.id);
-    } catch (error) {
+      await fetchLogs();
+
+      alert("Automation created successfully!");
+    } catch (error: any) {
       console.error("Error creating automation:", error);
+
+      // Log the error
+      try {
+        await supabase.from("automation_logs").insert({
+          automation_id: "00000000-0000-0000-0000-000000000000", // Use a placeholder UUID for system logs
+          status: "failed",
+          error_message: error.message || "Unknown error occurred",
+          executed_at: new Date().toISOString(),
+        });
+      } catch (logError) {
+        console.warn("Failed to log error:", logError);
+      }
+
+      alert(error.message || "Failed to create automation. Please try again.");
     }
   };
 
@@ -177,15 +265,38 @@ export default function AutomationsPage() {
 
       if (error) throw error;
 
+      // Log the toggle action
+      await supabase.from("automation_logs").insert({
+        automation_id: id,
+        status: "success",
+        executed_at: new Date().toISOString(),
+      });
+
       if (user) {
         await fetchAutomations(user.id);
+        await fetchLogs();
       }
     } catch (error) {
       console.error("Error toggling automation:", error);
+      // Log the error
+      await supabase.from("automation_logs").insert({
+        automation_id: id,
+        status: "failed",
+        error_message: error.message,
+        executed_at: new Date().toISOString(),
+      });
     }
   };
 
   const deleteAutomation = async (id: string) => {
+    if (
+      !confirm(
+        "Are you sure you want to delete this automation? This action cannot be undone.",
+      )
+    ) {
+      return;
+    }
+
     try {
       const { error } = await supabase
         .from("automations")
@@ -194,11 +305,26 @@ export default function AutomationsPage() {
 
       if (error) throw error;
 
+      // Log the deletion
+      await supabase.from("automation_logs").insert({
+        automation_id: "system",
+        status: "success",
+        executed_at: new Date().toISOString(),
+      });
+
       if (user) {
         await fetchAutomations(user.id);
+        await fetchLogs();
       }
     } catch (error) {
       console.error("Error deleting automation:", error);
+      // Log the error
+      await supabase.from("automation_logs").insert({
+        automation_id: "system",
+        status: "failed",
+        error_message: error.message,
+        executed_at: new Date().toISOString(),
+      });
     }
   };
 
@@ -566,6 +692,17 @@ export default function AutomationsPage() {
                     <Button
                       variant="outline"
                       className="w-full justify-start border-slate-600 bg-slate-700 hover:bg-slate-600 text-white"
+                      onClick={() => {
+                        setNewAutomation({
+                          name: "Email Notification",
+                          description:
+                            "Send email when survey response is received",
+                          trigger_type: "response_received",
+                          trigger_conditions: {},
+                          actions: [],
+                        });
+                        setShowCreateDialog(true);
+                      }}
                     >
                       <Mail className="mr-2 h-4 w-4" />
                       Email Notification
@@ -573,6 +710,16 @@ export default function AutomationsPage() {
                     <Button
                       variant="outline"
                       className="w-full justify-start border-slate-600 bg-slate-700 hover:bg-slate-600 text-white"
+                      onClick={() => {
+                        setNewAutomation({
+                          name: "Webhook Trigger",
+                          description: "Send webhook when survey is completed",
+                          trigger_type: "survey_completed",
+                          trigger_conditions: {},
+                          actions: [],
+                        });
+                        setShowCreateDialog(true);
+                      }}
                     >
                       <Webhook className="mr-2 h-4 w-4" />
                       Webhook Trigger
@@ -580,6 +727,17 @@ export default function AutomationsPage() {
                     <Button
                       variant="outline"
                       className="w-full justify-start border-slate-600 bg-slate-700 hover:bg-slate-600 text-white"
+                      onClick={() => {
+                        setNewAutomation({
+                          name: "Slack Message",
+                          description:
+                            "Send Slack message for low sentiment responses",
+                          trigger_type: "sentiment_threshold",
+                          trigger_conditions: {},
+                          actions: [],
+                        });
+                        setShowCreateDialog(true);
+                      }}
                     >
                       <MessageSquare className="mr-2 h-4 w-4" />
                       Slack Message

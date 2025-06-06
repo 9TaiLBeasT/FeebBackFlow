@@ -44,6 +44,183 @@ export type Database = {
           {
             foreignKeyName: "analytics_survey_id_fkey"
             columns: ["survey_id"]
+            isOneToOne: true
+            referencedRelation: "surveys"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      automation_logs: {
+        Row: {
+          automation_id: string
+          error_message: string | null
+          executed_at: string | null
+          id: string
+          status: string
+          survey_response_id: string | null
+        }
+        Insert: {
+          automation_id: string
+          error_message?: string | null
+          executed_at?: string | null
+          id?: string
+          status: string
+          survey_response_id?: string | null
+        }
+        Update: {
+          automation_id?: string
+          error_message?: string | null
+          executed_at?: string | null
+          id?: string
+          status?: string
+          survey_response_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "automation_logs_automation_id_fkey"
+            columns: ["automation_id"]
+            isOneToOne: false
+            referencedRelation: "automations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "automation_logs_survey_response_id_fkey"
+            columns: ["survey_response_id"]
+            isOneToOne: false
+            referencedRelation: "survey_responses"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      automations: {
+        Row: {
+          actions: Json | null
+          created_at: string | null
+          description: string | null
+          id: string
+          is_active: boolean | null
+          name: string
+          trigger_conditions: Json | null
+          trigger_type: string
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          actions?: Json | null
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          is_active?: boolean | null
+          name: string
+          trigger_conditions?: Json | null
+          trigger_type: string
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          actions?: Json | null
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          is_active?: boolean | null
+          name?: string
+          trigger_conditions?: Json | null
+          trigger_type?: string
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "automations_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      integrations: {
+        Row: {
+          config: Json
+          created_at: string | null
+          id: string
+          is_active: boolean | null
+          last_sync: string | null
+          name: string
+          type: string
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          config: Json
+          created_at?: string | null
+          id?: string
+          is_active?: boolean | null
+          last_sync?: string | null
+          name: string
+          type: string
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          config?: Json
+          created_at?: string | null
+          id?: string
+          is_active?: boolean | null
+          last_sync?: string | null
+          name?: string
+          type?: string
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "integrations_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      survey_distributions: {
+        Row: {
+          channel: string
+          created_at: string | null
+          id: string
+          opened_count: number | null
+          recipient_list: Json | null
+          response_count: number | null
+          sent_count: number | null
+          survey_id: string
+          updated_at: string | null
+        }
+        Insert: {
+          channel: string
+          created_at?: string | null
+          id?: string
+          opened_count?: number | null
+          recipient_list?: Json | null
+          response_count?: number | null
+          sent_count?: number | null
+          survey_id: string
+          updated_at?: string | null
+        }
+        Update: {
+          channel?: string
+          created_at?: string | null
+          id?: string
+          opened_count?: number | null
+          recipient_list?: Json | null
+          response_count?: number | null
+          sent_count?: number | null
+          survey_id?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "survey_distributions_survey_id_fkey"
+            columns: ["survey_id"]
             isOneToOne: false
             referencedRelation: "surveys"
             referencedColumns: ["id"]

@@ -155,18 +155,52 @@ export default function SurveysPage() {
 
   const updateSurveyStatus = async (surveyId: string, status: string) => {
     try {
-      const { error } = await supabase
-        .from("surveys")
-        .update({ status, updated_at: new Date().toISOString() })
-        .eq("id", surveyId);
+      // Validate status
+      const validStatuses = ["draft", "active", "completed", "paused"];
+      if (!validStatuses.includes(status)) {
+        throw new Error(`Invalid status: ${status}`);
+      }
 
-      if (error) throw error;
+      const { data, error } = await supabase
+        .from("surveys")
+        .update({
+          status: status,
+          updated_at: new Date().toISOString(),
+        })
+        .eq("id", surveyId)
+        .select()
+        .single();
+
+      if (error) {
+        console.error("Database error:", error);
+        throw new Error(`Failed to update survey status: ${error.message}`);
+      }
+
+      if (!data) {
+        throw new Error(
+          "Survey not found or you don't have permission to update it",
+        );
+      }
+
+      // Show success message
+      const statusMessages = {
+        active: "Survey activated successfully",
+        paused: "Survey paused successfully",
+        completed: "Survey completed successfully",
+        draft: "Survey moved to draft successfully",
+      };
+
+      // You can add a toast notification here if you have the toast hook available
+      console.log(statusMessages[status as keyof typeof statusMessages]);
 
       if (user) {
         await fetchSurveys(user.id);
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error updating survey status:", error);
+      alert(
+        error.message || "Failed to update survey status. Please try again.",
+      );
     }
   };
 

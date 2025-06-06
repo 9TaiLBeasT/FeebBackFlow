@@ -2,14 +2,32 @@
 
 const nextConfig = {
   images: {
-    domains: ["images.unsplash.com"],
+    domains: ["images.unsplash.com", "api.dicebear.com", "api.qrserver.com"],
   },
   webpack: (config, { dev }) => {
     // Disable webpack caching to prevent build errors
     if (!dev) {
       config.cache = false;
     }
+    // Handle potential module resolution issues
+    config.resolve.fallback = {
+      ...config.resolve.fallback,
+      fs: false,
+      net: false,
+      tls: false,
+    };
     return config;
+  },
+  // Optimize for production deployment
+  swcMinify: true,
+  compress: true,
+  poweredByHeader: false,
+  // Handle potential build issues
+  typescript: {
+    ignoreBuildErrors: false,
+  },
+  eslint: {
+    ignoreDuringBuilds: false,
   },
 };
 

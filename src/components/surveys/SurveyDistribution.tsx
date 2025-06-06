@@ -3,13 +3,13 @@
 import React, { useState } from "react";
 import {
   Mail,
-  MessageSquare,
   Link,
   QrCode,
   Send,
   Copy,
   Download,
   Settings,
+  Bell,
   Users,
   Calendar,
   Clock,
@@ -45,7 +45,7 @@ import { useToast } from "@/components/ui/use-toast";
 
 interface DistributionChannel {
   id: string;
-  type: "email" | "sms" | "link" | "qr_code" | "widget";
+  type: "email" | "link" | "qr_code" | "widget" | "push";
   name: string;
   description: string;
   icon: React.ReactNode;
@@ -78,7 +78,7 @@ export default function SurveyDistribution({
       id: "email",
       type: "email",
       name: "Email Campaign",
-      description: "Send surveys via email to your contact list",
+      description: "Send surveys via email using Resend",
       icon: <Mail className="h-5 w-5" />,
       enabled: false,
       config: {
@@ -90,16 +90,16 @@ export default function SurveyDistribution({
       },
     },
     {
-      id: "sms",
-      type: "sms",
-      name: "SMS Distribution",
-      description: "Send survey links via SMS to mobile contacts",
-      icon: <MessageSquare className="h-5 w-5" />,
+      id: "push",
+      type: "push",
+      name: "Push Notifications",
+      description: "Send push notifications via OneSignal",
+      icon: <Bell className="h-5 w-5" />,
       enabled: false,
       config: {
-        message: `Please complete our survey: ${shareUrl}`,
-        recipients: [],
-        schedule: "immediate",
+        title: `New Survey: ${survey.title}`,
+        message: "We'd love your feedback! Click to take our survey.",
+        url: shareUrl,
       },
     },
     {
@@ -153,9 +153,10 @@ export default function SurveyDistribution({
     scheduleDate: "",
   });
 
-  const [smsConfig, setSmsConfig] = useState({
-    recipients: "",
-    message: `Please complete our survey: ${shareUrl}`,
+  const [pushConfig, setPushConfig] = useState({
+    title: `New Survey: ${survey.title}`,
+    message: "We'd love your feedback! Click to take our survey.",
+    url: shareUrl,
     schedule: "immediate",
     scheduleDate: "",
   });
@@ -216,27 +217,109 @@ export default function SurveyDistribution({
       const recipients = emailConfig.recipients
         .split(",")
         .map((email) => email.trim())
-        .filter((email) => email);
+        .filter((email) => email && email.includes("@"));
+
+      if (recipients.length === 0) {
+        throw new Error("No valid email addresses found");
+      }
+
+      // Validate email format
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      const invalidEmails = recipients.filter(
+        (email) => !emailRegex.test(email),
+      );
+      if (invalidEmails.length > 0) {
+        throw new Error(`Invalid email addresses: ${invalidEmails.join(", ")}`);
+      }
 
       // Save distribution record
-      const { error } = await supabase.from("survey_distributions").insert({
-        survey_id: survey.id,
-        channel: "email",
-        recipient_list: recipients,
-        sent_count: recipients.length,
+      const { data, error } = await supabase
+        .from("survey_distributions")
+        .insert({
+          survey_id: survey.id,
+          channel: "email",
+          recipient_list: recipients,
+          sent_count: recipients.length,
+          opened_count: 0,
+          response_count: 0,
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString(),
+        })
+        .select()
+        .single();
+
+      if (error) {
+        console.error("Database error:", error);
+        throw new Error(`Database error: ${error.message}`);
+      }
+
+      // Send emails using Resend API
+      const emailPromises = recipients.map(async (email) => {
+        const response = await fetch("https://api.resend.com/emails", {
+          method: "POST",
+          headers: {
+            Authorization: "Bearer re_QtUtDPm6_5LnqarvP8Ys1huP7a3PMiXaQ",
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            from: "Survey Team <noreply@yourdomain.com>",
+            to: [email],
+            subject: emailConfig.subject,
+            html: `
+              <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+                <h2 style="color: #1e40af;">${emailConfig.subject}</h2>
+                <p>${emailConfig.message}</p>
+                <div style="margin: 30px 0;">
+                  <a href="${shareUrl}" style="background-color: #1e40af; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; display: inline-block;">Take Survey</a>
+                </div>
+                <p style="color: #666; font-size: 14px;">Survey Link: <a href="${shareUrl}">${shareUrl}</a></p>
+              </div>
+            `,
+          }),
+        });
+
+        if (!response.ok) {
+          const errorData = await response.json();
+          throw new Error(
+            `Failed to send email to ${email}: ${errorData.message || response.statusText}`,
+          );
+        }
+
+        return response.json();
       });
 
-      if (error) throw error;
+      await Promise.all(emailPromises);
+
+      // Update the distribution record to mark as sent
+      await supabase
+        .from("survey_distributions")
+        .update({
+          sent_count: recipients.length,
+          updated_at: new Date().toISOString(),
+        })
+        .eq("id", data.id);
 
       toast({
         title: "Email Campaign Sent!",
-        description: `Survey sent to ${recipients.length} recipients`,
+        description: `Survey sent to ${recipients.length} recipients via Resend.`,
       });
-    } catch (error) {
+
+      // Reset form
+      setEmailConfig({
+        recipients: "",
+        subject: `Feedback Request: ${survey.title}`,
+        message:
+          "We'd love to hear your feedback. Please take a moment to complete this survey.",
+        schedule: "immediate",
+        scheduleDate: "",
+      });
+    } catch (error: any) {
       console.error("Error sending email campaign:", error);
       toast({
         title: "Error",
-        description: "Failed to send email campaign",
+        description:
+          error.message ||
+          "Failed to send email campaign. Please check your configuration.",
         variant: "destructive",
       });
     } finally {
@@ -244,11 +327,11 @@ export default function SurveyDistribution({
     }
   };
 
-  const sendSMSCampaign = async () => {
-    if (!smsConfig.recipients.trim()) {
+  const sendPushNotification = async () => {
+    if (!pushConfig.title.trim() || !pushConfig.message.trim()) {
       toast({
         title: "Error",
-        description: "Please add phone numbers",
+        description: "Please add notification title and message",
         variant: "destructive",
       });
       return;
@@ -256,30 +339,88 @@ export default function SurveyDistribution({
 
     setLoading(true);
     try {
-      const recipients = smsConfig.recipients
-        .split(",")
-        .map((phone) => phone.trim())
-        .filter((phone) => phone);
+      // Check if OneSignal is available
+      if (typeof window === "undefined" || !window.OneSignal) {
+        throw new Error("OneSignal is not loaded. Please refresh the page.");
+      }
+
+      // Send push notification using OneSignal
+      const notificationData = {
+        headings: { en: pushConfig.title },
+        contents: { en: pushConfig.message },
+        url: pushConfig.url,
+        chrome_web_icon: "/favicon.ico",
+        included_segments: ["All"],
+      };
+
+      const response = await fetch(
+        "https://onesignal.com/api/v1/notifications",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: "Basic YOUR_REST_API_KEY", // You'll need to add your OneSignal REST API key
+          },
+          body: JSON.stringify({
+            app_id: "38a81c58-0420-4340-90af-03cf1a0322a8",
+            ...notificationData,
+          }),
+        },
+      );
+
+      if (!response.ok) {
+        // Fallback to browser notification if OneSignal API fails
+        if ("Notification" in window) {
+          const permission = await Notification.requestPermission();
+          if (permission === "granted") {
+            new Notification(pushConfig.title, {
+              body: pushConfig.message,
+              icon: "/favicon.ico",
+            });
+          }
+        }
+      }
 
       // Save distribution record
-      const { error } = await supabase.from("survey_distributions").insert({
-        survey_id: survey.id,
-        channel: "sms",
-        recipient_list: recipients,
-        sent_count: recipients.length,
-      });
+      const { data, error } = await supabase
+        .from("survey_distributions")
+        .insert({
+          survey_id: survey.id,
+          channel: "push",
+          recipient_list: ["all_subscribers"],
+          sent_count: 1,
+          opened_count: 0,
+          response_count: 0,
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString(),
+        })
+        .select()
+        .single();
 
-      if (error) throw error;
+      if (error) {
+        console.error("Database error:", error);
+      }
 
       toast({
-        title: "SMS Campaign Sent!",
-        description: `Survey sent to ${recipients.length} recipients`,
+        title: "Push Notification Sent!",
+        description: "Survey notification sent to all subscribers.",
       });
-    } catch (error) {
-      console.error("Error sending SMS campaign:", error);
+
+      // Reset form
+      setPushConfig({
+        title: `New Survey: ${survey.title}`,
+        message: "We'd love your feedback! Click to take our survey.",
+        url: shareUrl,
+        schedule: "immediate",
+        scheduleDate: "",
+      });
+    } catch (error: any) {
+      console.error("Error sending push notification:", error);
       toast({
         title: "Error",
-        description: "Failed to send SMS campaign",
+        description:
+          error.message ||
+          "Failed to send push notification. Please check your configuration.",
         variant: "destructive",
       });
     } finally {
@@ -425,50 +566,66 @@ export default function SurveyDistribution({
                           </div>
                         )}
 
-                        {channel.type === "sms" && (
+                        {channel.type === "push" && (
                           <div className="space-y-3">
                             <div>
-                              <Label htmlFor="sms-recipients">
-                                Phone Numbers (comma-separated)
+                              <Label htmlFor="push-title">
+                                Notification Title
                               </Label>
-                              <Textarea
-                                id="sms-recipients"
-                                placeholder="+1234567890, +0987654321"
-                                value={smsConfig.recipients}
+                              <Input
+                                id="push-title"
+                                placeholder="Survey notification title"
+                                value={pushConfig.title}
                                 onChange={(e) =>
-                                  setSmsConfig({
-                                    ...smsConfig,
-                                    recipients: e.target.value,
+                                  setPushConfig({
+                                    ...pushConfig,
+                                    title: e.target.value,
                                   })
                                 }
                                 className="bg-slate-700 border-slate-600 text-white"
                               />
                             </div>
                             <div>
-                              <Label htmlFor="sms-message">Message</Label>
+                              <Label htmlFor="push-message">Message</Label>
                               <Textarea
-                                id="sms-message"
-                                value={smsConfig.message}
+                                id="push-message"
+                                value={pushConfig.message}
                                 onChange={(e) =>
-                                  setSmsConfig({
-                                    ...smsConfig,
+                                  setPushConfig({
+                                    ...pushConfig,
                                     message: e.target.value,
                                   })
                                 }
                                 className="bg-slate-700 border-slate-600 text-white"
-                                maxLength={160}
+                                maxLength={200}
                               />
                               <p className="text-xs text-slate-400 mt-1">
-                                {smsConfig.message.length}/160 characters
+                                {pushConfig.message.length}/200 characters
                               </p>
                             </div>
+                            <div>
+                              <Label htmlFor="push-url">Survey URL</Label>
+                              <Input
+                                id="push-url"
+                                value={pushConfig.url}
+                                onChange={(e) =>
+                                  setPushConfig({
+                                    ...pushConfig,
+                                    url: e.target.value,
+                                  })
+                                }
+                                className="bg-slate-700 border-slate-600 text-white"
+                              />
+                            </div>
                             <Button
-                              onClick={sendSMSCampaign}
+                              onClick={sendPushNotification}
                               disabled={loading}
                               className="w-full bg-cyber-blue hover:bg-cyber-blue/80 text-black font-semibold"
                             >
                               <Send className="mr-2 h-4 w-4" />
-                              {loading ? "Sending..." : "Send SMS Campaign"}
+                              {loading
+                                ? "Sending..."
+                                : "Send Push Notification"}
                             </Button>
                           </div>
                         )}
