@@ -153,18 +153,20 @@ export default function SurveysPage() {
     }
   };
 
-  const updateSurveyStatus = async (surveyId: string, status: string) => {
+  const updateSurveyStatus = async (surveyId: string, newStatus: string) => {
     try {
-      // Validate status
+      // Validate status against database constraint
       const validStatuses = ["draft", "active", "completed", "paused"];
-      if (!validStatuses.includes(status)) {
-        throw new Error(`Invalid status: ${status}`);
+      if (!validStatuses.includes(newStatus)) {
+        throw new Error(
+          `Invalid status: ${newStatus}. Must be one of: ${validStatuses.join(", ")}`,
+        );
       }
 
       const { data, error } = await supabase
         .from("surveys")
         .update({
-          status: status,
+          status: newStatus,
           updated_at: new Date().toISOString(),
         })
         .eq("id", surveyId)
@@ -190,8 +192,7 @@ export default function SurveysPage() {
         draft: "Survey moved to draft successfully",
       };
 
-      // You can add a toast notification here if you have the toast hook available
-      console.log(statusMessages[status as keyof typeof statusMessages]);
+      console.log(statusMessages[newStatus as keyof typeof statusMessages]);
 
       if (user) {
         await fetchSurveys(user.id);
@@ -268,10 +269,12 @@ export default function SurveysPage() {
 
   if (loading) {
     return (
-      <div className="flex h-screen bg-[#121212] items-center justify-center">
+      <div className="flex h-screen bg-gradient-cyber items-center justify-center font-orbitron">
         <div className="flex flex-col items-center space-y-4">
-          <div className="animate-spin rounded-full h-8 w-8 border-2 border-slate-600 border-t-[#1E90FF]"></div>
-          <div className="text-white text-lg">Loading Surveys...</div>
+          <div className="animate-spin rounded-full h-8 w-8 border-2 border-slate-600 border-t-cyber-blue"></div>
+          <div className="text-white text-lg font-orbitron">
+            Loading Surveys...
+          </div>
         </div>
       </div>
     );
@@ -343,14 +346,14 @@ export default function SurveysPage() {
   }
 
   return (
-    <div className="flex h-screen bg-[#121212] text-[#E0E0E0]">
+    <div className="flex h-screen bg-gradient-cyber text-[#E0E0E0] font-orbitron">
       <DashboardSidebar user={user} onSignOut={handleSignOut} />
 
       <div className="flex-1 flex flex-col overflow-hidden">
         {/* Header */}
-        <header className="h-16 border-b border-slate-800 flex items-center justify-between px-6">
+        <header className="h-16 border-b border-slate-800 flex items-center justify-between px-6 bg-slate-900/50 backdrop-blur-sm">
           <div className="flex items-center space-x-4">
-            <h1 className="text-2xl font-bold text-white text-enhanced">
+            <h1 className="text-2xl font-bold text-cyber-blue text-enhanced">
               Surveys
             </h1>
             <Badge variant="secondary" className="bg-slate-800 text-slate-300">

@@ -41,15 +41,17 @@ import {
 import { supabase } from "@/lib/supabase";
 import type { User } from "@supabase/supabase-js";
 
+type TriggerType =
+  | "response_received"
+  | "survey_completed"
+  | "sentiment_threshold"
+  | "time_based";
+
 interface Automation {
   id: string;
   name: string;
   description: string;
-  trigger_type:
-    | "response_received"
-    | "survey_completed"
-    | "sentiment_threshold"
-    | "time_based";
+  trigger_type: TriggerType;
   trigger_conditions: any;
   actions: any[];
   is_active: boolean;
@@ -74,10 +76,16 @@ export default function AutomationsPage() {
   const [editingAutomation, setEditingAutomation] = useState<Automation | null>(
     null,
   );
-  const [newAutomation, setNewAutomation] = useState({
+  const [newAutomation, setNewAutomation] = useState<{
+    name: string;
+    description: string;
+    trigger_type: TriggerType;
+    trigger_conditions: any;
+    actions: any[];
+  }>({
     name: "",
     description: "",
-    trigger_type: "response_received" as const,
+    trigger_type: "response_received",
     trigger_conditions: {},
     actions: [],
   });
@@ -146,7 +154,7 @@ export default function AutomationsPage() {
 
     try {
       // Validate trigger type
-      const validTriggerTypes = [
+      const validTriggerTypes: TriggerType[] = [
         "response_received",
         "survey_completed",
         "sentiment_threshold",
@@ -169,7 +177,7 @@ export default function AutomationsPage() {
       ];
 
       // Set default trigger conditions based on trigger type
-      let defaultConditions = {};
+      let defaultConditions: any = {};
       switch (newAutomation.trigger_type) {
         case "sentiment_threshold":
           defaultConditions = { threshold: 3.0, operator: "less_than" };
@@ -282,7 +290,7 @@ export default function AutomationsPage() {
       await supabase.from("automation_logs").insert({
         automation_id: id,
         status: "failed",
-        error_message: error.message,
+        error_message: error instanceof Error ? error.message : String(error),
         executed_at: new Date().toISOString(),
       });
     }
@@ -322,7 +330,7 @@ export default function AutomationsPage() {
       await supabase.from("automation_logs").insert({
         automation_id: "system",
         status: "failed",
-        error_message: error.message,
+        error_message: error instanceof Error ? error.message : String(error),
         executed_at: new Date().toISOString(),
       });
     }
@@ -484,7 +492,7 @@ export default function AutomationsPage() {
                         <Label htmlFor="trigger">Trigger</Label>
                         <Select
                           value={newAutomation.trigger_type}
-                          onValueChange={(value: any) =>
+                          onValueChange={(value: TriggerType) =>
                             setNewAutomation({
                               ...newAutomation,
                               trigger_type: value,
@@ -697,7 +705,7 @@ export default function AutomationsPage() {
                           name: "Email Notification",
                           description:
                             "Send email when survey response is received",
-                          trigger_type: "response_received",
+                          trigger_type: "response_received" as TriggerType,
                           trigger_conditions: {},
                           actions: [],
                         });
@@ -714,7 +722,7 @@ export default function AutomationsPage() {
                         setNewAutomation({
                           name: "Webhook Trigger",
                           description: "Send webhook when survey is completed",
-                          trigger_type: "survey_completed",
+                          trigger_type: "survey_completed" as TriggerType,
                           trigger_conditions: {},
                           actions: [],
                         });
@@ -732,7 +740,7 @@ export default function AutomationsPage() {
                           name: "Slack Message",
                           description:
                             "Send Slack message for low sentiment responses",
-                          trigger_type: "sentiment_threshold",
+                          trigger_type: "sentiment_threshold" as TriggerType,
                           trigger_conditions: {},
                           actions: [],
                         });

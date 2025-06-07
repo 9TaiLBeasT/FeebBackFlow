@@ -11,6 +11,7 @@ import {
   ChevronDown,
   ChevronRight,
   Send,
+  ChevronUp,
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -212,7 +213,7 @@ export default function SurveyBuilder({
   };
 
   return (
-    <div className="flex h-full w-full bg-gradient-cyber font-orbitron">
+    <div className="flex h-full w-full bg-gradient-cyber font-orbitron text-white">
       {/* Left Sidebar - Question Types */}
       <div className="w-64 border-r border-slate-800 bg-slate-900/50 backdrop-blur-sm p-4 flex flex-col">
         <h3 className="text-lg font-semibold mb-4 text-cyber-blue">
@@ -221,7 +222,7 @@ export default function SurveyBuilder({
         <div className="space-y-2">
           <Button
             variant="outline"
-            className="w-full justify-start"
+            className="w-full justify-start border-slate-600 text-white hover:bg-slate-700"
             onClick={() => addQuestion("multiple-choice")}
           >
             <Plus className="mr-2 h-4 w-4" />
@@ -229,7 +230,7 @@ export default function SurveyBuilder({
           </Button>
           <Button
             variant="outline"
-            className="w-full justify-start"
+            className="w-full justify-start border-slate-600 text-white hover:bg-slate-700"
             onClick={() => addQuestion("likert")}
           >
             <Plus className="mr-2 h-4 w-4" />
@@ -237,7 +238,7 @@ export default function SurveyBuilder({
           </Button>
           <Button
             variant="outline"
-            className="w-full justify-start"
+            className="w-full justify-start border-slate-600 text-white hover:bg-slate-700"
             onClick={() => addQuestion("open-ended")}
           >
             <Plus className="mr-2 h-4 w-4" />
@@ -245,7 +246,7 @@ export default function SurveyBuilder({
           </Button>
           <Button
             variant="outline"
-            className="w-full justify-start"
+            className="w-full justify-start border-slate-600 text-white hover:bg-slate-700"
             onClick={() => addQuestion("yes-no")}
           >
             <Plus className="mr-2 h-4 w-4" />
@@ -253,7 +254,7 @@ export default function SurveyBuilder({
           </Button>
           <Button
             variant="outline"
-            className="w-full justify-start"
+            className="w-full justify-start border-slate-600 text-white hover:bg-slate-700"
             onClick={() => addQuestion("rating")}
           >
             <Plus className="mr-2 h-4 w-4" />
@@ -272,14 +273,21 @@ export default function SurveyBuilder({
             <Save className="mr-2 h-4 w-4" />
             {saving ? "Saving..." : "Save Survey"}
           </Button>
-          <Button variant="outline" className="w-full" onClick={handlePreview}>
+          <Button
+            variant="outline"
+            className="w-full border-slate-600 text-white hover:bg-slate-700"
+            onClick={handlePreview}
+          >
             <Eye className="mr-2 h-4 w-4" />
             Preview
           </Button>
           {survey?.id && (
             <Dialog open={showDistribution} onOpenChange={setShowDistribution}>
               <DialogTrigger asChild>
-                <Button variant="outline" className="w-full">
+                <Button
+                  variant="outline"
+                  className="w-full border-slate-600 text-white hover:bg-slate-700"
+                >
                   <Send className="mr-2 h-4 w-4" />
                   Distribute
                 </Button>
@@ -311,13 +319,13 @@ export default function SurveyBuilder({
             <Input
               value={surveyTitle}
               onChange={(e) => setSurveyTitle(e.target.value)}
-              className="text-2xl font-bold border-none bg-transparent px-0 text-foreground focus-visible:ring-0 h-auto text-3xl mb-2"
+              className="text-2xl font-bold border-none bg-transparent px-0 text-white focus-visible:ring-0 h-auto text-3xl mb-2"
               placeholder="Survey Title"
             />
             <Textarea
               value={surveyDescription}
               onChange={(e) => setSurveyDescription(e.target.value)}
-              className="border-none bg-transparent resize-none px-0 focus-visible:ring-0"
+              className="border-none bg-transparent resize-none px-0 text-white focus-visible:ring-0"
               placeholder="Survey Description"
             />
           </div>
@@ -339,7 +347,7 @@ export default function SurveyBuilder({
                         <span className="text-sm text-muted-foreground">
                           Q{index + 1}.
                         </span>
-                        <span className="font-medium">
+                        <span className="font-medium text-white">
                           {question?.title || "Question"}
                         </span>
                         {question?.required && (
@@ -347,7 +355,7 @@ export default function SurveyBuilder({
                         )}
                       </div>
                       {question?.description && (
-                        <p className="text-sm text-muted-foreground">
+                        <p className="text-sm text-slate-400">
                           {question.description}
                         </p>
                       )}
@@ -362,7 +370,9 @@ export default function SurveyBuilder({
                                   className="flex items-center gap-2"
                                 >
                                   <div className="h-4 w-4 rounded-full border border-muted-foreground" />
-                                  <span className="text-sm">{option}</span>
+                                  <span className="text-sm text-slate-400">
+                                    {option}
+                                  </span>
                                 </div>
                               ))}
                             </div>
@@ -386,8 +396,8 @@ export default function SurveyBuilder({
                         )}
 
                         {question?.type === "open-ended" && (
-                          <div className="mt-2 border border-dashed border-border rounded-md p-3 bg-muted/20">
-                            <p className="text-sm text-muted-foreground italic">
+                          <div className="mt-2 border border-dashed border-slate-600 rounded-md p-3 bg-slate-800/20">
+                            <p className="text-sm text-slate-400 italic">
                               Text response area
                             </p>
                           </div>
@@ -397,11 +407,11 @@ export default function SurveyBuilder({
                           <div className="flex gap-4 mt-2">
                             <div className="flex items-center gap-2">
                               <div className="h-4 w-4 rounded-full border border-muted-foreground" />
-                              <span className="text-sm">Yes</span>
+                              <span className="text-sm text-white">Yes</span>
                             </div>
                             <div className="flex items-center gap-2">
                               <div className="h-4 w-4 rounded-full border border-muted-foreground" />
-                              <span className="text-sm">No</span>
+                              <span className="text-sm text-white">No</span>
                             </div>
                           </div>
                         )}
@@ -411,7 +421,7 @@ export default function SurveyBuilder({
                             {[1, 2, 3, 4, 5].map((star) => (
                               <div
                                 key={star}
-                                className="text-xl text-muted-foreground"
+                                className="text-xl text-slate-400"
                               >
                                 ★
                               </div>
@@ -423,7 +433,7 @@ export default function SurveyBuilder({
                     <Button
                       variant="ghost"
                       size="sm"
-                      className="text-muted-foreground hover:text-destructive"
+                      className="text-slate-400 hover:text-red-400"
                       onClick={(e) => {
                         e.stopPropagation();
                         removeQuestion(question.id);
@@ -442,9 +452,19 @@ export default function SurveyBuilder({
       {/* Right Sidebar - Properties */}
       <div className="w-80 border-l border-slate-800 bg-slate-900/50 backdrop-blur-sm p-4 overflow-y-auto">
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <TabsList className="grid w-full grid-cols-2">
-            <TabsTrigger value="questions">Question</TabsTrigger>
-            <TabsTrigger value="settings">Settings</TabsTrigger>
+          <TabsList className="grid w-full grid-cols-2 bg-slate-800">
+            <TabsTrigger
+              value="questions"
+              className="text-white data-[state=active]:bg-slate-700"
+            >
+              Question
+            </TabsTrigger>
+            <TabsTrigger
+              value="settings"
+              className="text-white data-[state=active]:bg-slate-700"
+            >
+              Settings
+            </TabsTrigger>
           </TabsList>
 
           <TabsContent value="questions" className="mt-4 space-y-4">
@@ -452,7 +472,9 @@ export default function SurveyBuilder({
               <>
                 <div className="space-y-4">
                   <div>
-                    <Label htmlFor="question-title">Question Title</Label>
+                    <Label htmlFor="question-title" className="text-white">
+                      Question Title
+                    </Label>
                     <Input
                       id="question-title"
                       value={selectedQuestionData.title}
@@ -461,11 +483,15 @@ export default function SurveyBuilder({
                           title: e.target.value,
                         })
                       }
+                      className="bg-slate-800 border-slate-600 text-white"
                     />
                   </div>
 
                   <div>
-                    <Label htmlFor="question-description">
+                    <Label
+                      htmlFor="question-description"
+                      className="text-white"
+                    >
                       Description (Optional)
                     </Label>
                     <Textarea
@@ -477,11 +503,14 @@ export default function SurveyBuilder({
                         })
                       }
                       placeholder="Add a description..."
+                      className="bg-slate-800 border-slate-600 text-white"
                     />
                   </div>
 
                   <div className="flex items-center justify-between">
-                    <Label htmlFor="required-switch">Required</Label>
+                    <Label htmlFor="required-switch" className="text-white">
+                      Required
+                    </Label>
                     <Switch
                       id="required-switch"
                       checked={selectedQuestionData.required}
@@ -496,7 +525,7 @@ export default function SurveyBuilder({
                   {selectedQuestionData.type === "multiple-choice" &&
                     selectedQuestionData.options && (
                       <div>
-                        <Label>Options</Label>
+                        <Label className="text-white">Options</Label>
                         <div className="space-y-2 mt-2">
                           {selectedQuestionData.options.map((option, index) => (
                             <div
@@ -514,11 +543,12 @@ export default function SurveyBuilder({
                                     options: newOptions,
                                   });
                                 }}
-                                className="flex-1"
+                                className="flex-1 bg-slate-800 border-slate-600 text-white"
                               />
                               <Button
                                 variant="ghost"
                                 size="sm"
+                                className="text-slate-400 hover:text-red-400"
                                 onClick={() => {
                                   const newOptions =
                                     selectedQuestionData.options!.filter(
@@ -536,7 +566,7 @@ export default function SurveyBuilder({
                           <Button
                             variant="outline"
                             size="sm"
-                            className="w-full mt-2"
+                            className="w-full mt-2 border-slate-600 text-white hover:bg-slate-700"
                             onClick={() => {
                               const newOptions = [
                                 ...selectedQuestionData.options!,
@@ -556,7 +586,9 @@ export default function SurveyBuilder({
 
                   {selectedQuestionData.type === "likert" && (
                     <div>
-                      <Label htmlFor="scale-select">Scale Points</Label>
+                      <Label htmlFor="scale-select" className="text-white">
+                        Scale Points
+                      </Label>
                       <Select
                         value={selectedQuestionData.scale?.toString() || "5"}
                         onValueChange={(value) =>
@@ -565,14 +597,25 @@ export default function SurveyBuilder({
                           })
                         }
                       >
-                        <SelectTrigger id="scale-select">
+                        <SelectTrigger
+                          id="scale-select"
+                          className="bg-slate-800 border-slate-600 text-white"
+                        >
                           <SelectValue placeholder="Select scale" />
                         </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="3">3-point scale</SelectItem>
-                          <SelectItem value="5">5-point scale</SelectItem>
-                          <SelectItem value="7">7-point scale</SelectItem>
-                          <SelectItem value="10">10-point scale</SelectItem>
+                        <SelectContent className="bg-slate-800 border-slate-600">
+                          <SelectItem value="3" className="text-white">
+                            3-point scale
+                          </SelectItem>
+                          <SelectItem value="5" className="text-white">
+                            5-point scale
+                          </SelectItem>
+                          <SelectItem value="7" className="text-white">
+                            7-point scale
+                          </SelectItem>
+                          <SelectItem value="10" className="text-white">
+                            10-point scale
+                          </SelectItem>
                         </SelectContent>
                       </Select>
                     </div>
@@ -589,6 +632,7 @@ export default function SurveyBuilder({
                         (q) => q.id === selectedQuestionData.id,
                       ) === 0
                     }
+                    className="border-slate-600 text-white hover:bg-slate-700"
                   >
                     <ChevronUp className="h-4 w-4 mr-1" /> Move Up
                   </Button>
@@ -604,13 +648,14 @@ export default function SurveyBuilder({
                       ) ===
                       questions.length - 1
                     }
+                    className="border-slate-600 text-white hover:bg-slate-700"
                   >
                     <ChevronDown className="h-4 w-4 mr-1" /> Move Down
                   </Button>
                 </div>
               </>
             ) : (
-              <div className="text-center py-8 text-muted-foreground">
+              <div className="text-center py-8 text-slate-400">
                 Select a question to edit its properties
               </div>
             )}
@@ -618,45 +663,66 @@ export default function SurveyBuilder({
 
           <TabsContent value="settings" className="mt-4 space-y-4">
             <div>
-              <Label htmlFor="survey-title">Survey Title</Label>
+              <Label htmlFor="survey-title" className="text-white">
+                Survey Title
+              </Label>
               <Input
                 id="survey-title"
                 value={surveyTitle}
                 onChange={(e) => setSurveyTitle(e.target.value)}
+                className="bg-slate-800 border-slate-600 text-white"
               />
             </div>
 
             <div>
-              <Label htmlFor="survey-description">Survey Description</Label>
+              <Label htmlFor="survey-description" className="text-white">
+                Survey Description
+              </Label>
               <Textarea
                 id="survey-description"
                 value={surveyDescription}
                 onChange={(e) => setSurveyDescription(e.target.value)}
+                className="bg-slate-800 border-slate-600 text-white"
               />
             </div>
 
             <div>
-              <Label htmlFor="theme-select">Survey Theme</Label>
+              <Label htmlFor="theme-select" className="text-white">
+                Survey Theme
+              </Label>
               <Select defaultValue="default">
-                <SelectTrigger id="theme-select">
+                <SelectTrigger
+                  id="theme-select"
+                  className="bg-slate-800 border-slate-600 text-white"
+                >
                   <SelectValue placeholder="Select theme" />
                 </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="default">Default</SelectItem>
-                  <SelectItem value="minimal">Minimal</SelectItem>
-                  <SelectItem value="corporate">Corporate</SelectItem>
-                  <SelectItem value="custom">Custom</SelectItem>
+                <SelectContent className="bg-slate-800 border-slate-600">
+                  <SelectItem value="default" className="text-white">
+                    Default
+                  </SelectItem>
+                  <SelectItem value="minimal" className="text-white">
+                    Minimal
+                  </SelectItem>
+                  <SelectItem value="corporate" className="text-white">
+                    Corporate
+                  </SelectItem>
+                  <SelectItem value="custom" className="text-white">
+                    Custom
+                  </SelectItem>
                 </SelectContent>
               </Select>
             </div>
 
             <div className="flex items-center justify-between">
-              <Label htmlFor="progress-bar-switch">Show Progress Bar</Label>
+              <Label htmlFor="progress-bar-switch" className="text-white">
+                Show Progress Bar
+              </Label>
               <Switch id="progress-bar-switch" defaultChecked />
             </div>
 
             <div className="flex items-center justify-between">
-              <Label htmlFor="required-fields-switch">
+              <Label htmlFor="required-fields-switch" className="text-white">
                 Mark Required Fields
               </Label>
               <Switch id="required-fields-switch" defaultChecked />
@@ -665,25 +731,5 @@ export default function SurveyBuilder({
         </Tabs>
       </div>
     </div>
-  );
-}
-
-// Missing ChevronUp component, adding it here
-function ChevronUp(props: React.SVGProps<SVGSVGElement>) {
-  return (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      width="24"
-      height="24"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      {...props}
-    >
-      <polyline points="18 15 12 9 6 15"></polyline>
-    </svg>
   );
 }
